@@ -223,7 +223,7 @@ sell_signals = df[(df["SMA_short"] < df["SMA_long"]) &
 # In[ ]:
 
 
-fig = make_subplots(rows=4, cols=1, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "Bollinger Bands Width", 'Bollinger band %B', 'Bollinger Band Trend'))
+fig = make_subplots(rows=4, cols=1,vertical_spacing = 0.02, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "Bollinger Bands Width", 'Bollinger band %B', 'Bollinger Band Trend'))
 
 fig.append_trace(
     go.Candlestick(
