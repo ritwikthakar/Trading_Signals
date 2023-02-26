@@ -406,7 +406,7 @@ layout_1 = go.Layout(
     font_family='Monospace',
     font_color='#000000',
     font_size=20,
-    height=1200, width=1000)
+    height=1000, width=800)
 
 fig1.update_layout(layout_1)
 
