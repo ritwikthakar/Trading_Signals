@@ -54,6 +54,20 @@ rs = avg_gain / avg_loss
 df['RSI'] = 100 - (100 / (1 + rs))
 df['20RSI'] = df['RSI'].rolling(window=20).mean()
 
+def compute_rsi_divergence(df, window):
+    high = df["High"].rolling(window).max()
+    low = df["Low"].rolling(window).min()
+    rsi = df["RSI"]
+    divergence = (rsi - rsi.shift(window)) / (high - low)
+    return divergence
+
+rsi_divergence_window = 10
+df["RSI_Divergence"] = compute_rsi_divergence(df, rsi_divergence_window)
+
+# Compute buy and sell signals
+buy_signal = (df["RSI_Divergence"] > 0) & (df["RSI_Divergence"].shift(1) < 0)
+sell_signal = (df["RSI_Divergence"] < 0) & (df["RSI_Divergence"].shift(1) > 0)
+
 # Calculate the MACD
 df['12EMA'] = df['Close'].ewm(span=12).mean()
 df['26EMA'] = df['Close'].ewm(span=26).mean()
@@ -478,6 +492,11 @@ fig3.add_trace(go.Scatter(x=df.index, y=df['Final Upperband'], name='Supertrend 
 fig3.add_trace(go.Scatter(x=df.index, y=df['RSI'], name='RSI', line=dict(color='green', width=2)), row = 2, col = 1)
 
 fig3.add_trace(go.Scatter(x=df.index, y=df['20RSI'], name='Mean RSI', line=dict(color='Orange', width=2)), row = 2, col = 1)
+
+# Add buy and sell signals subplot
+fig3.add_trace(go.Scatter(x=df.index[buy_signal], y=df["RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
+
+fig3.add_trace(go.Scatter(x=df.index[sell_signal], y=df["RSI"][sell_signal], mode="markers", marker=dict(symbol="triangle-down", size=10, color="red"), name="Sell"), row=2, col=1)
 
 fig3.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 3, col = 1)
 
