@@ -6,6 +6,7 @@
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import yfinance as yf
 import datetime as dt
 from plotly.subplots import make_subplots
@@ -54,10 +55,11 @@ rs = avg_gain / avg_loss
 df['RSI'] = 100 - (100 / (1 + rs))
 df['20RSI'] = df['RSI'].rolling(window=20).mean()
 
-def compute_rsi_divergence(df, window):
-    high = df["High"].rolling(window).max()
-    low = df["Low"].rolling(window).min()
-    rsi = df["RSI"]
+# Compute RSI divergence
+def compute_rsi_divergence(data, window):
+    high = data["High"].rolling(window).max()
+    low = data["Low"].rolling(window).min()
+    rsi = data["RSI"]
     divergence = (rsi - rsi.shift(window)) / (high - low)
     return divergence
 
@@ -459,6 +461,7 @@ df = df.join(supertrend)
 
 # In[24]:
 
+
 fig3 = make_subplots(rows=3, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "ATR"))
 
 fig3.append_trace(
@@ -491,11 +494,6 @@ fig3.add_trace(go.Scatter(x=df.index, y=df['Final Upperband'], name='Supertrend 
 fig3.add_trace(go.Scatter(x=df.index, y=df['RSI'], name='RSI', line=dict(color='green', width=2)), row = 2, col = 1)
 
 fig3.add_trace(go.Scatter(x=df.index, y=df['20RSI'], name='Mean RSI', line=dict(color='Orange', width=2)), row = 2, col = 1)
-
-# Add buy and sell signals subplot
-fig3.add_trace(go.Scatter(x=df.index["buy_signal"], y=df["20RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
-
-fig3.add_trace(go.Scatter(x=df.index["sell_signal"], y=df["20RSI"][sell_signal], mode="markers", marker=dict(symbol="triangle-down", size=10, color="red"), name="Sell"), row=2, col=1)
 
 fig3.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 3, col = 1)
 
@@ -597,7 +595,6 @@ fig4.add_trace(go.Scatter(x=df.index, y=df['Passive_Return'],
                 mode='lines', name='Passive Trading Strategy', line=dict(color='Orange', width=2)))
 
 
-# In[ ]:
 
 
 tab1, tab2, tab3, tab4 = st.tabs(["Active Trading Strtegy" , "Results of Active Trading Strategy", "Passive Trading Strtegy" , "Results of Passive Trading Strategy"])
@@ -617,4 +614,3 @@ with tab3:
 with tab4:
     st.header("Results of Active Trading Strategy Vs Buy & Hold")
     st.plotly_chart(fig4)
-
