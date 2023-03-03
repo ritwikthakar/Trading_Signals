@@ -6,6 +6,7 @@
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import yfinance as yf
 import datetime as dt
 from plotly.subplots import make_subplots
@@ -583,6 +584,7 @@ df['Passive_Return'] = df['PSAR_Action'] * df['Return']
 # df.dropna(inplace=True)
 
 
+
 # In[17]:
 
 
@@ -596,20 +598,144 @@ fig4.add_trace(go.Scatter(x=df.index, y=df['Passive_Return'],
 
 
 
-tab1, tab2, tab3, tab4 = st.tabs(["Active Trading Strtegy" , "Results of Active Trading Strategy", "Passive Trading Strtegy" , "Results of Passive Trading Strategy"])
+stock_data = yf.download(ticker, start=start, end=end, interval = i)
+
+# Compute RSI
+def compute_rsi(data, window):
+    delta = data["Close"].diff()
+    gain = delta.where(delta > 0, 0)
+    loss = -delta.where(delta < 0, 0)
+    avg_gain = gain.rolling(window).mean()
+    avg_loss = loss.rolling(window).mean()
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
+
+rsi_window = 14
+stock_data["RSI"] = compute_rsi(stock_data, rsi_window)
+
+# Compute RSI divergence
+def compute_rsi_divergence(data, window):
+    high = data["High"].rolling(window).max()
+    low = data["Low"].rolling(window).min()
+    rsi = data["RSI"]
+    divergence = (rsi - rsi.shift(window)) / (high - low)
+    return divergence
+
+rsi_divergence_window = 10
+stock_data["RSI_Divergence"] = compute_rsi_divergence(stock_data, rsi_divergence_window)
+
+# Compute buy and sell signals
+buy_signal = (stock_data["RSI_Divergence"] > 0) & (stock_data["RSI_Divergence"].shift(1) < 0)
+sell_signal = (stock_data["RSI_Divergence"] < 0) & (stock_data["RSI_Divergence"].shift(1) > 0)
+
+# Create subplots
+fig1 = make_subplots(rows=4, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD", "ATR")) 
+
+# Add stock price and RSI subplot
+fig1.add_trace(go.Candlestick(x=stock_data.index, open=stock_data["Open"], high=stock_data["High"], low=stock_data["Low"], close=stock_data["Close"], name="Price"), row=1, col=1)
+fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data["RSI"], name="RSI"), row=2, col=1)
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='Orange', width=2)))
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['5SMA'], name='5 SMA', line=dict(color='purple', width=2)))
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['9SMA'], name='9 SMA', line=dict(color='blue', width=2)))
+
+# Add buy and sell signals subplot
+fig1.add_trace(go.Scatter(x=stock_data.index[buy_signal], y=stock_data["RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
+fig1.add_trace(go.Scatter(x=stock_data.index[sell_signal], y=stock_data["RSI"][sell_signal], mode="markers", marker=dict(symbol="triangle-down", size=10, color="red"), name="Sell"), row=2, col=1)
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['MACD'], name='MACD', line=dict(color='blue', width=2)), row = 3, col = 1)
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['Signal Line'], name='Signal', line=dict(color='red', width=2)), row = 3, col = 1)
+
+fig1.add_trace(go.Bar(x=df.index, y=df['Histogram'], name='Histogram', marker=dict(color=df['Histogram'], colorscale='rdylgn')), row = 3, col = 1)
+
+fig1.add_trace(go.Scatter(x=long.index,
+                         y=df["Close"],
+                         mode="markers",
+                         marker=dict(color="green", size=10, symbol='triangle-up'),
+                         name="Buy Signal"))
+
+fig1.add_trace(go.Scatter(x=short.index,
+                         y=df["Close"],
+                         mode="markers",
+                         marker=dict(color="red", size=10, symbol='triangle-down'),
+                         name="Sell Signal"))
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 4, col = 1)
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2)), row = 4, col = 1)
+
+# Update layout
+#fig1.update_layout(title=f"{ticker} Price and RSI Divergence", xaxis_rangeslider_visible=False)
+# Make it pretty
+layout_2 = go.Layout(
+    plot_bgcolor='#efefef',
+    # Font Families
+    font_family='Monospace',
+    font_color='#000000',
+    font_size=20,
+    height=1000, width=1200)
+
+if i == '1d':
+    fig1.update_xaxes(
+            rangeslider_visible=False,
+            rangebreaks=[
+                # NOTE: Below values are bound (not single values), ie. hide x to y
+                dict(bounds=["sat", "mon"]),  # hide weekends, eg. hide sat to before mon
+                # dict(bounds=[16, 9.5], pattern="hour"),  # hide hours outside of 9.30am-4pm
+                    # dict(values=["2019-12-25", "2020-12-24"])  # hide holidays (Christmas and New Year's, etc)
+                ]
+                    )
+elif i == '1wk':
+    fig1.update_xaxes(
+            rangeslider_visible=False,
+            rangebreaks=[
+                # NOTE: Below values are bound (not single values), ie. hide x to y
+                dict(bounds=["sat", "mon"]),  # hide weekends, eg. hide sat to before mon
+                # dict(bounds=[16, 9.5], pattern="hour"),  # hide hours outside of 9.30am-4pm
+                    # dict(values=["2019-12-25", "2020-12-24"])  # hide holidays (Christmas and New Year's, etc)
+                ]
+                    )
+else:
+    fig1.update_xaxes(
+            rangeslider_visible=False,
+            rangebreaks=[
+                # NOTE: Below values are bound (not single values), ie. hide x to y
+                dict(bounds=["sat", "mon"]),  # hide weekends, eg. hide sat to before mon
+                dict(bounds=[16, 9.5], pattern="hour"),  # hide hours outside of 9.30am-4pm
+                    # dict(values=["2019-12-25", "2020-12-24"])  # hide holidays (Christmas and New Year's, etc)
+                ]
+                    )
+
+# Update options and show plot
+fig1.update_layout(layout_2)
+
+
+# Show plot
+# fig1.show()
+
+
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Divergence Strategy","Active Trading Strtegy" , "Results of Active Trading Strategy", "Passive Trading Strtegy" , "Results of Passive Trading Strategy"])
     
 with tab1:
+    st.header("Divergence Strategy")
+    st.plotly_chart(fig1)
+
+with tab2:
     st.header("Active Trading Strategy")
     st.plotly_chart(fig)
     
-with tab2:
+with tab3:
     st.header("Results of Active Trading Strategy Vs Buy & Hold")
     st.plotly_chart(fig2)
 
-with tab3:
+with tab4:
     st.header("Passive Trading Strategy")
     st.plotly_chart(fig3)
     
-with tab4:
-    st.header("Results of Active Trading Strategy Vs Buy & Hold")
+with tab5:
+    st.header("Results of Passive Trading Strategy Vs Buy & Hold")
     st.plotly_chart(fig4)
