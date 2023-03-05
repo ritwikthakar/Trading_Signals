@@ -638,11 +638,19 @@ stock_data = stock_data.join(st_1)
 st_2 = Supertrend(df2, 21, 1)
 df2 = df2.join(st_2)
 
+# Heikin Ashi
+df2['ha_open'] = (df2['Open'].shift(1) + df2['Close'].shift(1)) / 2
+df2['ha_close'] = (df2['Open'] + df['High'] + df['Low'] + df['Close']) / 4
+df2['ha_high'] = df2[['High', 'ha_open', 'ha_close']].max(axis=1)
+df2['ha_low'] = df2[['Low', 'ha_open', 'ha_close']].min(axis=1)
+
+
+
 # Create subplots
 fig1 = make_subplots(rows=3, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD")) 
 
 # Add stock price and RSI subplot
-fig1.add_trace(go.Candlestick(x=stock_data.index, open=stock_data["Open"], high=stock_data["High"], low=stock_data["Low"], close=stock_data["Close"], name="Price"), row=1, col=1)
+fig1.add_trace(go.Candlestick(x=df2.index, open=df2["ha_open"], high=df2["ha_high"], low=df2["ha_low"], close=df2["ha_close"], name="Price"), row=1, col=1)
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data["RSI"], name="RSI"), row=2, col=1)
 
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Final Lowerband'], name='Supertrend Fast Lower Band',
