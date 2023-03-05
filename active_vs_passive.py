@@ -6,6 +6,7 @@
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import yfinance as yf
 import datetime as dt
 from plotly.subplots import make_subplots
@@ -451,7 +452,7 @@ def Supertrend(df, atr_period, multiplier):
     
     
 atr_period = 10
-atr_multiplier = 3.0
+atr_multiplier = 3
 
 
 supertrend = Supertrend(df, atr_period, atr_multiplier)
@@ -599,6 +600,8 @@ fig4.add_trace(go.Scatter(x=df.index, y=df['Passive_Return'],
 
 stock_data = yf.download(ticker, start=start, end=end, interval = i)
 
+df2 = stock_data.copy()
+
 # Compute RSI
 def compute_rsi(data, window):
     delta = data["Close"].diff()
@@ -628,18 +631,32 @@ stock_data["RSI_Divergence"] = compute_rsi_divergence(stock_data, rsi_divergence
 buy_signal = (stock_data["RSI_Divergence"] > 0) & (stock_data["RSI_Divergence"].shift(1) < 0)
 sell_signal = (stock_data["RSI_Divergence"] < 0) & (stock_data["RSI_Divergence"].shift(1) > 0)
 
+# Double Supertrend
+
+st_1 = Supertrend(stock_data, 14, 2)
+stock_data = stock_data.join(st_1)
+
+st_2 = Supertrend(df2, 21, 1)
+df2 = df2.join(st_2)
+
 # Create subplots
-fig1 = make_subplots(rows=4, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD", "ATR")) 
+fig1 = make_subplots(rows=3, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD")) 
 
 # Add stock price and RSI subplot
 fig1.add_trace(go.Candlestick(x=stock_data.index, open=stock_data["Open"], high=stock_data["High"], low=stock_data["Low"], close=stock_data["Close"], name="Price"), row=1, col=1)
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data["RSI"], name="RSI"), row=2, col=1)
 
-fig1.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='Orange', width=2)))
+fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Final Lowerband'], name='Supertrend Fast Lower Band',
+                         line = dict(color='green', width=2)))
 
-fig1.add_trace(go.Scatter(x=df.index, y=df['5SMA'], name='5 SMA', line=dict(color='purple', width=2)))
+fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Final Upperband'], name='Supertrend Fast Upper Band',
+                         line = dict(color='red', width=2)))
 
-fig1.add_trace(go.Scatter(x=df.index, y=df['9SMA'], name='9 SMA', line=dict(color='blue', width=2)))
+fig1.add_trace(go.Scatter(x=df2.index, y=df2['Final Lowerband'], name='Supertrend Slow Lower Band',
+                         line = dict(color='green', width=2)))
+
+fig1.add_trace(go.Scatter(x=df2.index, y=df2['Final Upperband'], name='Supertrend Slow Upper Band',
+                         line = dict(color='red', width=2)))
 
 # Add buy and sell signals subplot
 fig1.add_trace(go.Scatter(x=stock_data.index[buy_signal], y=stock_data["RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
@@ -663,9 +680,6 @@ fig1.add_trace(go.Scatter(x=short.index,
                          marker=dict(color="red", size=10, symbol='triangle-down'),
                          name="Sell Signal"))
 
-fig1.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 4, col = 1)
-
-fig1.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2)), row = 4, col = 1)
 
 # Update layout
 #fig1.update_layout(title=f"{ticker} Price and RSI Divergence", xaxis_rangeslider_visible=False)
