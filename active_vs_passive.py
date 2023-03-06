@@ -632,10 +632,10 @@ sell_signal = (stock_data["RSI_Divergence"] < 0) & (stock_data["RSI_Divergence"]
 
 # Double Supertrend
 
-st_1 = Supertrend(stock_data, 14, 2)
+st_1 = Supertrend(stock_data, 21, 3)
 stock_data = stock_data.join(st_1)
 
-st_2 = Supertrend(df2, 21, 1)
+st_2 = Supertrend(df2, 20, 7)
 df2 = df2.join(st_2)
 
 # Heikin Ashi
@@ -650,8 +650,8 @@ df2['ha_low'] = df2[['Low', 'ha_open', 'ha_close']].min(axis=1)
 fig1 = make_subplots(rows=3, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD")) 
 
 # Add stock price and RSI subplot
-# fig1.add_trace(go.Candlestick(x=df2.index, open=df2["ha_open"], high=df2["ha_high"], low=df2["ha_low"], close=df2["ha_close"], name="Price"), row=1, col=1)
-fig1.add_trace(go.Candlestick(x=df2.index, open=df2["Open"], high=df2["High"], low=df2["Low"], close=df2["Close"], name="Price"), row=1, col=1)
+fig1.add_trace(go.Candlestick(x=df2.index, open=df2["ha_open"], high=df2["ha_high"], low=df2["ha_low"], close=df2["ha_close"], name="Price"), row=1, col=1)
+# fig1.add_trace(go.Candlestick(x=df2.index, open=df2["Open"], high=df2["High"], low=df2["Low"], close=df2["Close"], name="Price"), row=1, col=1)
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data["RSI"], name="RSI"), row=2, col=1)
 
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Final Lowerband'], name='Supertrend Fast Lower Band',
