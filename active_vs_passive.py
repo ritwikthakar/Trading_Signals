@@ -456,10 +456,10 @@ def Supertrend(df, atr_period, multiplier):
 # atr_multiplier1 = 1
 
 
-supertrend = Supertrend(df3, 10, 3)
+supertrend = Supertrend(df3, 14, 2)
 df = df.join(supertrend)
 
-st_0 = Supertrend(df3, 10, 1)
+st_0 = Supertrend(df3, 21, 1)
 df3 = df3.join(supertrend)
 
 # In[24]:
