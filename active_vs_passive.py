@@ -315,6 +315,15 @@ fig2.add_trace(go.Scatter(x=df.index, y=df['System_Return'],
 
 # Passive Trading Strategy
 
+def choppiness_index(high, low, close, n=14):
+    hl_range = high - low
+    tr = np.maximum(high - low, abs(high - close.shift())) # true range
+    atr = tr.rolling(n).sum() / n # average true range
+    choppiness = 100 * np.log10(atr.rolling(n).sum() / hl_range.rolling(n).sum()) / np.log10(n)
+    return choppiness
+
+choppiness = choppiness_index(df["High"], df["Low"], df["Close"])
+
 df['50SMA'] = df['Close'].rolling(window=50).mean()
 
 def psar(df, iaf = 0.02, maxaf = 0.2):
@@ -505,9 +514,11 @@ fig3.add_trace(go.Scatter(x=df.index, y=df['RSI'], name='RSI', line=dict(color='
 
 fig3.add_trace(go.Scatter(x=df.index, y=df['20RSI'], name='Mean RSI', line=dict(color='Orange', width=2)), row = 2, col = 1)
 
-fig3.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 3, col = 1)
+fig3.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2),visible='legendonly'), row = 3, col = 1)
 
-fig3.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2)), row = 3, col = 1)
+fig3.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2),visible='legendonly'), row = 3, col = 1)
+
+fig3.add_trace(go.Scatter(x=df.index, y=choppiness, name='Choppiness Index', line=dict(color='blue', width=2)), row = 3, col = 1)
 
 # Make it pretty
 layout_1 = go.Layout(
