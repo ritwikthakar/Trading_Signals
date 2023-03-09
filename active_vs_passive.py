@@ -315,6 +315,16 @@ fig2.add_trace(go.Scatter(x=df.index, y=df['System_Return'],
 
 # Passive Trading Strategy
 
+# calculate the Average Directional Index (ADX)
+df['up_move'] = df['High'] - df['High'].shift()
+df['down_move'] = df['Low'].shift() - df['Low']
+df['plus_dm'] = np.where((df['up_move'] > df['down_move']) & (df['up_move'] > 0), df['up_move'], 0)
+df['minus_dm'] = np.where((df['down_move'] > df['up_move']) & (df['down_move'] > 0), df['down_move'], 0)
+df['plus_di'] = 100 * (df['plus_dm'] / df['atr']).ewm(span=n, adjust=False).mean()
+df['minus_di'] = 100 * (df['minus_dm'] / df['atr']).ewm(span=n, adjust=False).mean()
+df['dx'] = 100 * (abs(df['plus_di'] - df['minus_di']) / (df['plus_di'] + df['minus_di'])).ewm(span=n, adjust=False).mean()
+df['adx'] = df['dx'].ewm(span=n, adjust=False).mean()
+
 def choppiness_index(high, low, close, n=14):
     hl_range = high - low
     tr = np.maximum(high - low, abs(high - close.shift())) # true range
@@ -475,7 +485,7 @@ df3 = df3.join(st_0)
 # In[24]:
 
 
-fig3 = make_subplots(rows=3, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "Volatility"))
+fig3 = make_subplots(rows=4, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "Volatility", "Trend Strength"))
 
 fig3.append_trace(
     go.Candlestick(
@@ -519,6 +529,8 @@ fig3.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='
 fig3.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2)), row = 3, col = 1)
 
 fig3.add_trace(go.Scatter(x=df.index, y=choppiness, name='Choppiness Index', line=dict(color='blue', width=2),visible='legendonly'), row = 3, col = 1)
+
+fig3.add_trace(go.Scatter(x=df.index, y=df['adx'], name='ADX', line=dict(color='blue', width=2)), row = 4, col = 1)
 
 # Make it pretty
 layout_1 = go.Layout(
