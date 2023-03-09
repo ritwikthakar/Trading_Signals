@@ -494,10 +494,10 @@ fig3.add_trace(go.Scatter(x=df.index, y=df['Final Lowerband'], name='Supertrend 
 fig3.add_trace(go.Scatter(x=df.index, y=df['Final Upperband'], name='Supertrend Upper Band',
                          line = dict(color='red', width=2)))
 
-fig3.add_trace(go.Scatter(x=df3.index, y=df3['Final Lowerband'], name='Supertrend Fast Lower Band',
+fig3.add_trace(go.Scatter(x=df.index, y=df3['Final Lowerband'], name='Supertrend Fast Lower Band',
                          line = dict(color='blue', width=2)))
 
-fig3.add_trace(go.Scatter(x=df3.index, y=df3['Final Upperband'], name='Supertrend Fast Upper Band',
+fig3.add_trace(go.Scatter(x=df.index, y=df3['Final Upperband'], name='Supertrend Fast Upper Band',
                          line = dict(color='purple', width=2)))
 
 fig3.add_trace(go.Scatter(x=df.index, y=df['RSI'], name='RSI', line=dict(color='green', width=2)), row = 2, col = 1)
