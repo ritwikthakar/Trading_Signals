@@ -681,11 +681,20 @@ df2['ha_low'] = df2[['Low', 'ha_open', 'ha_close']].min(axis=1)
 
 
 # Create subplots
-fig1 = make_subplots(rows=3, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD")) 
+fig1 = make_subplots(rows=5, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD", "ATR", "ADX")) 
 
 # Add stock price and RSI subplot
-fig1.add_trace(go.Candlestick(x=df2.index, open=df2["ha_open"], high=df2["ha_high"], low=df2["ha_low"], close=df2["ha_close"], name="Price"), row=1, col=1)
-# fig1.add_trace(go.Candlestick(x=df2.index, open=df2["Open"], high=df2["High"], low=df2["Low"], close=df2["Close"], name="Price"), row=1, col=1)
+# fig1.add_trace(go.Candlestick(x=df2.index, open=df2["ha_open"], high=df2["ha_high"], low=df2["ha_low"], close=df2["ha_close"], name="Price"), row=1, col=1)
+fig1.add_trace(go.Candlestick(x=df2.index, open=df2["Open"], high=df2["High"], low=df2["Low"], close=df2["Close"], name="Price"), row=1, col=1)
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='Orange', width=2),visible='legendonly'))
+
+fig1.add_trace(go.Scatter(x=dates, y=df["psarbull"], name='buy',mode = 'markers',
+                         marker = dict(color='green', size=2)))
+
+fig1.add_trace(go.Scatter(x=dates, y=df["psarbear"], name='sell', mode = 'markers',
+                         marker = dict(color='red', size=2)))
+
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data["RSI"], name="RSI"), row=2, col=1)
 
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Final Lowerband'], name='Supertrend Fast Lower Band',
@@ -710,17 +719,23 @@ fig1.add_trace(go.Scatter(x=df.index, y=df['Signal Line'], name='Signal', line=d
 
 fig1.add_trace(go.Bar(x=df.index, y=df['Histogram'], name='Histogram', marker=dict(color=df['Histogram'], colorscale='rdylgn')), row = 3, col = 1)
 
-fig1.add_trace(go.Scatter(x=long.index,
-                         y=df["Close"],
-                         mode="markers",
-                         marker=dict(color="green", size=10, symbol='triangle-up'),
-                         name="Buy Signal"))
+fig1.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 4, col = 1)
 
-fig1.add_trace(go.Scatter(x=short.index,
-                         y=df["Close"],
-                         mode="markers",
-                         marker=dict(color="red", size=10, symbol='triangle-down'),
-                         name="Sell Signal"))
+fig1.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2)), row = 4, col = 1)
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['adx'], name='ADX', line=dict(color='blue', width=2)), row = 5, col = 1)
+
+# fig1.add_trace(go.Scatter(x=long.index,
+#                          y=df["Close"],
+#                          mode="markers",
+#                          marker=dict(color="green", size=10, symbol='triangle-up'),
+#                          name="Buy Signal"))
+
+# fig1.add_trace(go.Scatter(x=short.index,
+#                          y=df["Close"],
+#                          mode="markers",
+#                          marker=dict(color="red", size=10, symbol='triangle-down'),
+#                          name="Sell Signal"))
 
 
 # Update layout
