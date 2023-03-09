@@ -485,7 +485,7 @@ df3 = df3.join(st_0)
 # In[24]:
 
 
-fig3 = make_subplots(rows=4, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "Volatility", "Trend Strength"))
+fig3 = make_subplots(rows=4, cols=1,row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], column_widths=[1.0], vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "Volatility", "Trend Strength"))
 
 fig3.append_trace(
     go.Candlestick(
@@ -681,7 +681,7 @@ df2['ha_low'] = df2[['Low', 'ha_open', 'ha_close']].min(axis=1)
 
 
 # Create subplots
-fig1 = make_subplots(rows=5, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD", "ATR", "ADX")) 
+fig1 = make_subplots(rows=5, cols=1, row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], column_widths=[1.0], vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD", "ATR", "ADX")) 
 
 # Add stock price and RSI subplot
 # fig1.add_trace(go.Candlestick(x=df2.index, open=df2["ha_open"], high=df2["ha_high"], low=df2["ha_low"], close=df2["ha_close"], name="Price"), row=1, col=1)
@@ -800,7 +800,7 @@ fig1.update_layout(layout_2)
 # fig1.show()
 
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Divergence Strategy","Active Trading Strtegy" , "Results of Active Trading Strategy", "Passive Trading Strtegy" , "Results of Passive Trading Strategy"])
+tab1, tab2, tab3 = st.tabs(["Divergence Strategy", "Active Trading Strtegy" , "Passive Trading Strtegy"])
     
 with tab1:
     st.header("Divergence Strategy")
@@ -811,13 +811,5 @@ with tab2:
     st.plotly_chart(fig)
     
 with tab3:
-    st.header("Results of Active Trading Strategy Vs Buy & Hold")
-    st.plotly_chart(fig2)
-
-with tab4:
     st.header("Passive Trading Strategy")
     st.plotly_chart(fig3)
-    
-with tab5:
-    st.header("Results of Passive Trading Strategy Vs Buy & Hold")
-    st.plotly_chart(fig4)
