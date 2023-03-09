@@ -451,15 +451,16 @@ def Supertrend(df, atr_period, multiplier):
     }, index=df.index)
     
     
-# atr_period = 14
-# atr_multiplier = 2
-# atr_multiplier1 = 1
+atr_period = 14
+atr_multiplier = 2
+atr_period1 = 21
+atr_multiplier1 = 1
 
 
-supertrend = Supertrend(df3, 14, 2)
+supertrend = Supertrend(df3, atr_period, atr_multiplier)
 df = df.join(supertrend)
 
-st_0 = Supertrend(df3, 21, 1)
+st_0 = Supertrend(df3, atr_period1, atr_multiplier1)
 df3 = df3.join(supertrend)
 
 # In[24]:
