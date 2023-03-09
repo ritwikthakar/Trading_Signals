@@ -698,16 +698,28 @@ fig1.add_trace(go.Scatter(x=dates, y=df["psarbear"], name='sell', mode = 'marker
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data["RSI"], name="RSI"), row=2, col=1)
 
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Final Lowerband'], name='Supertrend Fast Lower Band',
-                         line = dict(color='green', width=2)))
+                         line = dict(color='Blue', width=2)))
 
 fig1.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Final Upperband'], name='Supertrend Fast Upper Band',
-                         line = dict(color='red', width=2)))
+                         line = dict(color='purple', width=2)))
 
 fig1.add_trace(go.Scatter(x=df2.index, y=df2['Final Lowerband'], name='Supertrend Slow Lower Band',
                          line = dict(color='green', width=2)))
 
 fig1.add_trace(go.Scatter(x=df2.index, y=df2['Final Upperband'], name='Supertrend Slow Upper Band',
                          line = dict(color='red', width=2)))
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['Final Lowerband'], name='Supertrend 10 Period Lower Band',
+                         line = dict(color='green', width=2),visible='legendonly'))
+
+fig1.add_trace(go.Scatter(x=df.index, y=df['Final Upperband'], name='Supertrend 10 Period Upper Band',
+                         line = dict(color='red', width=2),visible='legendonly'))
+
+fig1.add_trace(go.Scatter(x=df.index, y=df3['Final Lowerband'], name='Supertrend 10 Period Fast Lower Band',
+                         line = dict(color='blue', width=2),visible='legendonly'))
+
+fig1.add_trace(go.Scatter(x=df.index, y=df3['Final Upperband'], name='Supertrend 10 Period Fast Upper Band',
+                         line = dict(color='purple', width=2),visible='legendonly'))
 
 # Add buy and sell signals subplot
 fig1.add_trace(go.Scatter(x=stock_data.index[buy_signal], y=stock_data["RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
@@ -726,10 +738,10 @@ fig1.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(
 fig1.add_trace(go.Scatter(x=df.index, y=df['adx'], name='ADX', line=dict(color='blue', width=2)), row = 5, col = 1)
 
 # fig1.add_trace(go.Scatter(x=long.index,
-#                          y=df["Close"],
+#                          y=df["MACD"],
 #                          mode="markers",
 #                          marker=dict(color="green", size=10, symbol='triangle-up'),
-#                          name="Buy Signal"))
+#                          name="Buy Signal")),row = 3, col = 1)
 
 # fig1.add_trace(go.Scatter(x=short.index,
 #                          y=df["Close"],
