@@ -475,7 +475,7 @@ df3 = df3.join(st_0)
 # In[24]:
 
 
-fig3 = make_subplots(rows=3, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "ATR"))
+fig3 = make_subplots(rows=3, cols=1, vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "Volatility"))
 
 fig3.append_trace(
     go.Candlestick(
