@@ -514,11 +514,11 @@ fig3.add_trace(go.Scatter(x=df.index, y=df['RSI'], name='RSI', line=dict(color='
 
 fig3.add_trace(go.Scatter(x=df.index, y=df['20RSI'], name='Mean RSI', line=dict(color='Orange', width=2)), row = 2, col = 1)
 
-fig3.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2),visible='legendonly'), row = 3, col = 1)
+fig3.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 3, col = 1)
 
-fig3.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2),visible='legendonly'), row = 3, col = 1)
+fig3.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2)), row = 3, col = 1)
 
-fig3.add_trace(go.Scatter(x=df.index, y=choppiness, name='Choppiness Index', line=dict(color='blue', width=2)), row = 3, col = 1)
+fig3.add_trace(go.Scatter(x=df.index, y=choppiness, name='Choppiness Index', line=dict(color='blue', width=2),visible='legendonly'), row = 3, col = 1)
 
 # Make it pretty
 layout_1 = go.Layout(
