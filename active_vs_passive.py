@@ -161,7 +161,7 @@ mean_reversion_sell = df[(df["Close"] < df["20SMA"]) &
 # In[21]:
 
 
-fig = make_subplots(rows=5, cols=1,row_heights=[0.6, 0.1, 0.1, 0.1, 0.1], column_widths=[1.0], vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "MACD", "% B", "Bollinger Band Width", "Bollinger Band Trend"))
+fig = make_subplots(rows=5, cols=1,row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], column_widths=[1.0], vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "MACD", "% B", "Bollinger Band Width", "Bollinger Band Trend"))
 
 fig.append_trace(
     go.Candlestick(
@@ -248,7 +248,7 @@ layout = go.Layout(
     font_family='Monospace',
     font_color='#000000',
     font_size=20,
-    height=1200, width=800)
+    height=1000, width=1200)
 
 if i == '1d':
     fig.update_xaxes(
