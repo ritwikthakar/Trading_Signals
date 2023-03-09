@@ -481,7 +481,7 @@ fig3.append_trace(
     ), row=1, col=1
 )
 
-fig3.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='Orange', width=2)))
+fig3.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='Orange', width=2),visible='legendonly'))
 
 fig3.add_trace(go.Scatter(x=dates, y=df["psarbull"], name='buy',mode = 'markers',
                          marker = dict(color='green', size=2)))
