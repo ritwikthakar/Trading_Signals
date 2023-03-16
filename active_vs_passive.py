@@ -730,28 +730,41 @@ df2['ha_close'] = (df2['Open'] + df['High'] + df['Low'] + df['Close']) / 4
 df2['ha_high'] = df2[['High', 'ha_open', 'ha_close']].max(axis=1)
 df2['ha_low'] = df2[['Low', 'ha_open', 'ha_close']].min(axis=1)
 
-# Calculate the Keltner Channels and Bollinger Bands using Pandas TA
-keltner_channels = ta.kc(df2["High"], df2["Low"], df2["Close"], length=20)
-bollinger_bands = ta.bbands(df2["Close"], length=20)
+# Calculate the Bollinger Bands and Keltner Channels
+ma = df2['Close'].rolling(window=20).mean()
+std = df2['Close'].rolling(window=20).std()
+upper_bb = ma + 2 * std
+lower_bb = ma - 2 * std
+ema20 = df2['Close'].ewm(span=20).mean()
+atrl = pd.Series(0.0, index=df.index)
+atrl[0] = df['High'][0] - df['Low'][0]
+for i in range(1, len(df)):
+    h = df['High'][i]
+    l = df['Low'][i]
+    pc = df['Close'][i-1]
+    tr = max(h-l, abs(h-pc), abs(l-pc))
+    atrl[i] = (atrl[i-1]*13 + tr) / 14
+upper_kc = ema20 + 1.5 * atrl
+lower_kc = ema20 - 1.5 * atrl
 
-# Calculate the Squeeze and Squeeze Pro using Pandas TA
-squeeze = (bollinger_bands["BBL_20_2.0"] - keltner_channels["LOWER_20_2.0"]) / keltner_channels["UPPER_20_2.0"] - keltner_channels["LOWER_20_2.0"]
-squeeze_on = squeeze < 0.02
-squeeze_off = squeeze > 0.5
-stddev = df2["Close"].rolling(window=20).std()
-ma = df2["Close"].rolling(window=20).mean()
-upper_band = ma + 2 * stddev
-lower_band = ma - 2 * stddev
-sqz_on = (lower_band > keltner_channels["LOWER_20_2.0"]) & (upper_band < keltner_channels["UPPER_20_2.0"])
-sqz_pro = (sqz_on == 0) & (sqz_on.shift(1) == 1)
+# Calculate the Squeeze Momentum Indicator (SMI)
+highest = df['High'].rolling(window=14).max()
+lowest = df['Low'].rolling(window=14).min()
+smi = 100 * (df['Close'] - lowest) / (highest - lowest)
+smi_ema = smi.ewm(span=3).mean()
+smi_diff = smi - smi_ema
+smi_signal = smi_diff.rolling(window=5).mean()
 
-# Calculate the Squeeze Momentum Indicator
-ema8 = ta.ema(df2["Close"], length=8)
-ema34 = ta.ema(df2["Close"], length=34)
-macd = ema8 - ema34
-signal = ta.ema(macd, length=13)
-histogram = macd - signal
-histogram_color = ["green" if h > 0 else "red" for h in histogram]
+# Calculate the Squeeze Momentum Indicator Pro (SMIP)
+bb_range = upper_bb - lower_bb
+kc_range = upper_kc - lower_kc
+smip = (smi_diff / bb_range) + (smi_diff / kc_range)
+smip_ema = smip.ewm(span=3).mean()
+
+# Calculate the Squeeze
+squeeze = ((upper_bb - lower_bb) / ma).rolling(window=20).mean()
+squeeze_on = (squeeze < 0.03) & (squeeze.shift(1) > 0.03)
+squeeze_off = (squeeze > 0.03) & (squeeze.shift(1) < 0.03)
 
 
 # Create subplots
@@ -807,11 +820,12 @@ fig1.add_trace(go.Bar(x=df2.index,y=sh,name="ImpulseHisto",marker=dict(color="bl
             
 fig1.add_trace(go.Scatter(x=df2.index,y=sb,name="ImpulseMACDCDSignal",mode="lines",line=dict(color="maroon")),row = 3, col=1)
 
-fig1.add_trace(go.Bar(x=df.index, y=histogram, name="Histogram"),row = 4, col=1)
+# Add the SMIP histogram
+fig1.add_trace(go.Bar(x=df.index, y=smip, name="SMIP", marker_color=['green' if smip[i] > smip_ema[i] else 'red' for i in range(len(smip))]),row = 4, col=1)
 
-fig1.add_trace(go.Scatter(x=smi_on.index, y=histogram[smi_on], mode="markers", marker=dict(color="purple"), name="SMI Squeeze On"),row = 4, col=1)
-
-fig1.add_trace(go.Scatter(x=smi_off.index, y=histogram[smi_off], mode="markers", marker=dict(color="blue"), name="SMI Squeeze Off"),row = 4, col=1)
+# Add the Squeeze on and off markers
+fig1.add_trace(go.Scatter(x=squeeze_on.index, y=smip[squeeze_on], mode='markers', name='Squeeze On', marker=dict(color='green', symbol='triangle-up', size=10)),row = 4, col=1)
+fig1.add_trace(go.Scatter(x=squeeze_off.index, y=smip[squeeze_off], mode='markers', name='Squeeze Off', marker=dict(color='red', symbol='triangle-down', size=10)),row = 4, col=1)
 
 fig1.add_trace(go.Scatter(x=df.index, y=df['adx'], name='ADX', line=dict(color='blue', width=2)), row = 5, col = 1)
 
