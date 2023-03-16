@@ -670,7 +670,60 @@ st_1 = Supertrend(stock_data, 21, 3)
 stock_data = stock_data.join(st_1)
 
 st_2 = Supertrend(df2, 20, 7)
-df2 = df2.join(st_2)
+df2 = df2.join(st_2
+               
+# Impulse MACD
+# Define input variables
+length_ma = 34
+length_signal = 9
+
+# Define functions
+def calc_smma(src, length):
+    smma = []
+    for i in range(len(src)):
+        if i == 0:
+            smma.append(src[i])
+        else:
+            smma.append(((length - 1) * smma[-1] + src[i]) / length)
+    return smma
+
+def calc_zlema(src, length):
+    ema1 = []
+    ema2 = []
+    d = []
+    for i in range(len(src)):
+        if i == 0:
+            ema1.append(src[i])
+        else:
+            ema1.append((2 * src[i] + (length - 1) * ema1[-1]) / (length + 1))
+    for i in range(len(ema1)):
+        if i == 0:
+            ema2.append(ema1[i])
+        else:
+            ema2.append((2 * ema1[i] + (length - 1) * ema2[-1]) / (length + 1))
+    for i in range(len(ema1)):
+        d.append(ema1[i] - ema2[i])
+    return [ema1, ema2, d]
+
+# Calculate Impulse MACD
+src = (df['High'] + df['Low'] + df['Close']) / 3
+hi = calc_smma(df['High'], length_ma)
+lo = calc_smma(df['Low'], length_ma)
+mi = calc_zlema(src, length_ma)[0]
+md = []
+mdc = []
+for i in range(len(mi)):
+    if mi[i] > hi[i]:
+        md.append(mi[i] - hi[i])
+        mdc.append('lime')
+    elif mi[i] < lo[i]:
+        md.append(mi[i] - lo[i])
+        mdc.append('red')
+    else:
+        md.append(0)
+        mdc.append('orange')
+sb = calc_smma(md, length_signal)
+sh = [md[i] - sb[i] for i in range(len(md))]
 
 # Heikin Ashi
 df2['ha_open'] = (df2['Open'].shift(1) + df2['Close'].shift(1)) / 2
@@ -725,11 +778,13 @@ fig1.add_trace(go.Scatter(x=df.index, y=df3['Final Upperband'], name='Supertrend
 fig1.add_trace(go.Scatter(x=stock_data.index[buy_signal], y=stock_data["RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
 fig1.add_trace(go.Scatter(x=stock_data.index[sell_signal], y=stock_data["RSI"][sell_signal], mode="markers", marker=dict(symbol="triangle-down", size=10, color="red"), name="Sell"), row=2, col=1)
 
-fig1.add_trace(go.Scatter(x=df.index, y=df['MACD'], name='MACD', line=dict(color='blue', width=2)), row = 3, col = 1)
+fig1.add_trace(go.Scatter(x=df.index,y=[0] * len(df),name="MidLine",mode="lines",line=dict(color="gray")), row = 3, col=1)
+               
+fig1.add_trace(go.Bar(x=df.index,y=md,name="ImpulseMACD",marker=dict(color=mdc)),row = 3, col=1)
 
-fig1.add_trace(go.Scatter(x=df.index, y=df['Signal Line'], name='Signal', line=dict(color='red', width=2)), row = 3, col = 1)
-
-fig1.add_trace(go.Bar(x=df.index, y=df['Histogram'], name='Histogram', marker=dict(color=df['Histogram'], colorscale='rdylgn')), row = 3, col = 1)
+fig1.add_trace(go.Bar(x=df.index,y=sh,name="ImpulseHisto",marker=dict(color="blue")),row = 3, col=1)
+            
+fig1.add_trace(go.Scatter(x=df.index,y=sb,name="ImpulseMACDCDSignal",mode="lines",line=dict(color="maroon")),row = 3, col=1)
 
 fig1.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 4, col = 1)
 
