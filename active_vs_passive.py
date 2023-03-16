@@ -818,7 +818,7 @@ fig1.add_trace(go.Scatter(x=df2.index[squeeze_on], y=[0] * squeeze_on.sum(),
                          name="Squeeze On"), row = 4, col =1)
 fig1.add_trace(go.Scatter(x=df2.index[squeeze_off], y=[0] * squeeze_off.sum(),
                          mode="markers", marker=dict(size=8, color="purple"),
-                         name=""Squeeze Off"),row = 4, col =1)
+                         name="Squeeze Off"),row = 4, col =1)
                           
 fig1.add_trace(go.Scatter(x=df.index, y=df['adx'], name='ADX', line=dict(color='blue', width=2)), row = 5, col = 1)
 
