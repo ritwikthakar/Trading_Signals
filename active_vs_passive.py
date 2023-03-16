@@ -670,12 +670,11 @@ st_1 = Supertrend(stock_data, 21, 3)
 stock_data = stock_data.join(st_1)
 
 st_2 = Supertrend(df2, 20, 7)
-df2 = df2.join(st_2
-               
+df2 = df2.join(st_2               
+
 # Impulse MACD
-# Define input variables
-    length_ma = 34
-    length_signal = 9
+length_ma = 34
+length_signal = 9
 
 # Define functions
 def calc_smma(src, length):
