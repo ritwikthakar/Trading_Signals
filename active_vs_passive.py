@@ -729,7 +729,32 @@ df2['ha_close'] = (df2['Open'] + df['High'] + df['Low'] + df['Close']) / 4
 df2['ha_high'] = df2[['High', 'ha_open', 'ha_close']].max(axis=1)
 df2['ha_low'] = df2[['Low', 'ha_open', 'ha_close']].min(axis=1)
 
+# Define the parameters
+n = 20  # period for SMI
+m = 5  # period for moving averages
+f = 1.5  # factor for threshold
 
+# Calculate the SMI
+middle_band = df2["Close"].ewm(span=n).mean()
+tr1 = df2["High"] - df2["Low"]
+tr2 = abs(df2["High"] - df2["Close"].shift())
+tr3 = abs(df2["Low"] - df2["Close"].shift())
+tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
+atr = tr.rolling(n).mean()
+keltner_upper = middle_band + 2 * atr
+keltner_lower = middle_band - 2 * atr
+std = df["Close"].rolling(n).std()
+bollinger_upper = middle_band + 2 * std
+bollinger_lower = middle_band - 2 * std
+squeeze = (bollinger_upper - bollinger_lower) / (keltner_upper - keltner_lower)
+smi = (df["Close"] - middle_band) / squeeze
+
+# Calculate the SMP
+smi_ma = smi.rolling(m).mean()
+smi_diff_ma = abs(smi - smi_ma).rolling(m).mean()
+threshold = f * smi_diff_ma.std()
+squeeze_on = (smi < smi_ma) & (smi_diff_ma < threshold)
+squeeze_off = smi >= smi_ma
 
 # Create subplots
 fig1 = make_subplots(rows=5, cols=1, row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], column_widths=[1.0], vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "MACD", "ATR", "ADX")) 
@@ -784,10 +809,17 @@ fig1.add_trace(go.Bar(x=df2.index,y=sh,name="ImpulseHisto",marker=dict(color="bl
             
 fig1.add_trace(go.Scatter(x=df2.index,y=sb,name="ImpulseMACDCDSignal",mode="lines",line=dict(color="maroon")),row = 3, col=1)
 
-fig1.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 4, col = 1)
+colors = ['green' if val > 0 else 'red' for val in smi]
 
-fig1.add_trace(go.Scatter(x=df.index, y=df['20atr'], name='Mean ATR', line=dict(color='orange', width=2)), row = 4, col = 1)
+fig1.add_trace(go.Histogram(x=smi, nbinsx=100, marker_color=colors, name="SMI"),row = 4, col =1)
 
+fig1.add_trace(go.Scatter(x=df2.index[squeeze_on], y=[0] * squeeze_on.sum(),
+                         mode="markers", marker=dict(size=8, color="blue"),
+                         name="Squeeze On"), row = 4, col =1)
+fig1.add_trace(go.Scatter(x=df2.index[squeeze_off], y=[0] * squeeze_off.sum(),
+                         mode="markers", marker=dict(size=8, color="purple"),
+                         name=""Squeeze Off"),row = 4, col =1)
+                          
 fig1.add_trace(go.Scatter(x=df.index, y=df['adx'], name='ADX', line=dict(color='blue', width=2)), row = 5, col = 1)
 
 # fig1.add_trace(go.Scatter(x=long.index,
