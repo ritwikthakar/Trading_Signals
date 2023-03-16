@@ -811,7 +811,7 @@ fig1.add_trace(go.Scatter(x=df2.index,y=sb,name="ImpulseMACDCDSignal",mode="line
 
 colors = ['green' if val > 0 else 'red' for val in smi]
 
-fig1.add_trace(go.Histogram(x=smi, nbinsx=100, marker_color=colors, name="SMI"),row = 4, col =1)
+fig1.add_trace(go.Bar(x=smi, nbinsx=100, marker_color=colors, name="SMI"),row = 4, col =1)
 
 fig1.add_trace(go.Scatter(x=df2.index[squeeze_on], y=[0] * squeeze_on.sum(),
                          mode="markers", marker=dict(size=8, color="blue"),
