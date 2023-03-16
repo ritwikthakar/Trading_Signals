@@ -722,7 +722,7 @@ st_1 = Supertrend(stock_data, 21, 3)
 stock_data = stock_data.join(st_1)
 
 st_2 = Supertrend(df2, 20, 7)
-df2 = df2.join(st_2               
+df2 = df2.join(st_2)               
 
 # Heikin Ashi
 df2['ha_open'] = (df2['Open'].shift(1) + df2['Close'].shift(1)) / 2
