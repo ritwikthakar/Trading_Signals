@@ -635,43 +635,6 @@ stock_data = yf.download(ticker, start=start, end=end, interval = i)
 
 df2 = stock_data.copy()
 
-# Compute RSI
-def compute_rsi(data, window):
-    delta = data["Close"].diff()
-    gain = delta.where(delta > 0, 0)
-    loss = -delta.where(delta < 0, 0)
-    avg_gain = gain.rolling(window).mean()
-    avg_loss = loss.rolling(window).mean()
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
-
-rsi_window = 14
-stock_data["RSI"] = compute_rsi(stock_data, rsi_window)
-
-# Compute RSI divergence
-def compute_rsi_divergence(data, window):
-    high = data["High"].rolling(window).max()
-    low = data["Low"].rolling(window).min()
-    rsi = data["RSI"]
-    divergence = (rsi - rsi.shift(window)) / (high - low)
-    return divergence
-
-rsi_divergence_window = 10
-stock_data["RSI_Divergence"] = compute_rsi_divergence(stock_data, rsi_divergence_window)
-
-# Compute buy and sell signals
-buy_signal = (stock_data["RSI_Divergence"] > 0) & (stock_data["RSI_Divergence"].shift(1) < 0)
-sell_signal = (stock_data["RSI_Divergence"] < 0) & (stock_data["RSI_Divergence"].shift(1) > 0)
-
-# Double Supertrend
-
-st_1 = Supertrend(stock_data, 21, 3)
-stock_data = stock_data.join(st_1)
-
-st_2 = Supertrend(df2, 20, 7)
-df2 = df2.join(st_2               
-
 # Impulse MACD
 length_ma = 34
 length_signal = 9
@@ -723,6 +686,43 @@ for i in range(len(mi)):
         mdc.append('orange')
 sb = calc_smma(md, length_signal)
 sh = [md[i] - sb[i] for i in range(len(md))]
+
+# Compute RSI
+def compute_rsi(data, window):
+    delta = data["Close"].diff()
+    gain = delta.where(delta > 0, 0)
+    loss = -delta.where(delta < 0, 0)
+    avg_gain = gain.rolling(window).mean()
+    avg_loss = loss.rolling(window).mean()
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
+
+rsi_window = 14
+stock_data["RSI"] = compute_rsi(stock_data, rsi_window)
+
+# Compute RSI divergence
+def compute_rsi_divergence(data, window):
+    high = data["High"].rolling(window).max()
+    low = data["Low"].rolling(window).min()
+    rsi = data["RSI"]
+    divergence = (rsi - rsi.shift(window)) / (high - low)
+    return divergence
+
+rsi_divergence_window = 10
+stock_data["RSI_Divergence"] = compute_rsi_divergence(stock_data, rsi_divergence_window)
+
+# Compute buy and sell signals
+buy_signal = (stock_data["RSI_Divergence"] > 0) & (stock_data["RSI_Divergence"].shift(1) < 0)
+sell_signal = (stock_data["RSI_Divergence"] < 0) & (stock_data["RSI_Divergence"].shift(1) > 0)
+
+# Double Supertrend
+
+st_1 = Supertrend(stock_data, 21, 3)
+stock_data = stock_data.join(st_1)
+
+st_2 = Supertrend(df2, 20, 7)
+df2 = df2.join(st_2               
 
 # Heikin Ashi
 df2['ha_open'] = (df2['Open'].shift(1) + df2['Close'].shift(1)) / 2
