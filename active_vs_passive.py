@@ -634,8 +634,7 @@ fig4.add_trace(go.Scatter(x=df.index, y=df['Passive_Return'],
 stock_data = yf.download(ticker, start=start, end=end, interval = i)
 
 df2 = stock_data.copy()
-
-# Impulse MACD
+# Define input variables
 length_ma = 34
 length_signal = 9
 
@@ -668,9 +667,9 @@ def calc_zlema(src, length):
     return [ema1, ema2, d]
 
 # Calculate Impulse MACD
-src = (df['High'] + df['Low'] + df['Close']) / 3
-hi = calc_smma(df['High'], length_ma)
-lo = calc_smma(df['Low'], length_ma)
+src = (df2['High'] + df2['Low'] + df2['Close']) / 3
+hi = calc_smma(df2['High'], length_ma)
+lo = calc_smma(df2['Low'], length_ma)
 mi = calc_zlema(src, length_ma)[0]
 md = []
 mdc = []
@@ -777,13 +776,13 @@ fig1.add_trace(go.Scatter(x=df.index, y=df3['Final Upperband'], name='Supertrend
 fig1.add_trace(go.Scatter(x=stock_data.index[buy_signal], y=stock_data["RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
 fig1.add_trace(go.Scatter(x=stock_data.index[sell_signal], y=stock_data["RSI"][sell_signal], mode="markers", marker=dict(symbol="triangle-down", size=10, color="red"), name="Sell"), row=2, col=1)
 
-fig1.add_trace(go.Scatter(x=df.index,y=[0] * len(df),name="MidLine",mode="lines",line=dict(color="gray")), row = 3, col=1)
+fig1.add_trace(go.Scatter(x=df2.index,y=[0] * len(df),name="MidLine",mode="lines",line=dict(color="gray")), row = 3, col=1)
                
-fig1.add_trace(go.Bar(x=df.index,y=md,name="ImpulseMACD",marker=dict(color=mdc)),row = 3, col=1)
+fig1.add_trace(go.Bar(x=df2.index,y=md,name="ImpulseMACD",marker=dict(color=mdc)),row = 3, col=1)
 
-fig1.add_trace(go.Bar(x=df.index,y=sh,name="ImpulseHisto",marker=dict(color="blue")),row = 3, col=1)
+fig1.add_trace(go.Bar(x=df2.index,y=sh,name="ImpulseHisto",marker=dict(color="blue")),row = 3, col=1)
             
-fig1.add_trace(go.Scatter(x=df.index,y=sb,name="ImpulseMACDCDSignal",mode="lines",line=dict(color="maroon")),row = 3, col=1)
+fig1.add_trace(go.Scatter(x=df2.index,y=sb,name="ImpulseMACDCDSignal",mode="lines",line=dict(color="maroon")),row = 3, col=1)
 
 fig1.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 4, col = 1)
 
