@@ -761,6 +761,15 @@ kc_range = upper_kc - lower_kc
 smip = (smi_diff / bb_range) + (smi_diff / kc_range)
 smip_ema = smip.ewm(span=3).mean()
 
+# Calculate the Squeeze Momentum Indicator and SMI histogram
+# Calculate the Squeeze Momentum Indicator
+ema8 = ta.ema(df["Close"], length=8)
+ema34 = ta.ema(df["Close"], length=34)
+macd = ema8 - ema34
+signal = ta.ema(macd, length=13)
+histogram = macd - signal
+histogram_color = ["green" if h > 0 else "red" for h in histogram]
+
 # Calculate the Squeeze
 squeeze = ((upper_bb - lower_bb) / ma).rolling(window=20).mean()
 squeeze_on = (squeeze < 0.03) & (squeeze.shift(1) > 0.03)
@@ -821,7 +830,7 @@ fig1.add_trace(go.Bar(x=df2.index,y=sh,name="ImpulseHisto",marker=dict(color="bl
 fig1.add_trace(go.Scatter(x=df2.index,y=sb,name="ImpulseMACDCDSignal",mode="lines",line=dict(color="maroon")),row = 3, col=1)
 
 # Add the SMIP histogram
-fig1.add_trace(go.Bar(x=df.index, y=smip, name="SMIP", marker_color=['green' if smip[i] > smip_ema[i] else 'red' for i in range(len(smip))]),row = 4, col=1)
+fig1.add_trace(go.Bar(x=data.index, y=histogram, marker=dict(color=histogram_color), name="Histogram"),row = 4, col=1)
 
 # Add the Squeeze on and off markers
 fig1.add_trace(go.Scatter(x=squeeze_on.index, y=smip[squeeze_on], mode='markers', name='Squeeze On', marker=dict(color='green', symbol='triangle-up', size=10)),row = 4, col=1)
