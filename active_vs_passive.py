@@ -674,8 +674,8 @@ df2 = df2.join(st_2
                
 # Impulse MACD
 # Define input variables
-length_ma = 34
-length_signal = 9
+    length_ma = 34
+    length_signal = 9
 
 # Define functions
 def calc_smma(src, length):
