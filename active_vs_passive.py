@@ -777,7 +777,7 @@ squeeze_off = (squeeze > 0.03) & (squeeze.shift(1) < 0.03)
 
 
 # Create subplots
-fig1 = make_subplots(rows=5, cols=1, row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], column_widths=[1.0], vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "Impulse MACD", "SMI", "ADX")) 
+fig1 = make_subplots(rows=5, cols=1, row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], column_widths=[1.0], vertical_spacing = 0.04, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "RSI", "Impulse MACD", "Volatility", "ADX")) 
 
 # Add stock price and RSI subplot
 # fig1.add_trace(go.Candlestick(x=df2.index, open=df2["ha_open"], high=df2["ha_high"], low=df2["ha_low"], close=df2["ha_close"], name="Price"), row=1, col=1)
