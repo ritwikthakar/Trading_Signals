@@ -833,8 +833,10 @@ fig1.add_trace(go.Scatter(x=df2.index,y=sb,name="ImpulseMACDCDSignal",mode="line
 # fig1.add_trace(go.Bar(x=data.index, y=histogram, marker=dict(color=histogram), name="Histogram"),row = 4, col=1)
 
 # Add the Squeeze on and off markers
-fig1.add_trace(go.Scatter(x=squeeze_on.index, y=smip[squeeze_on], mode='markers', name='Squeeze On', marker=dict(color='green', symbol='triangle-up', size=10)),row = 4, col=1)
-fig1.add_trace(go.Scatter(x=squeeze_off.index, y=smip[squeeze_off], mode='markers', name='Squeeze Off', marker=dict(color='red', symbol='triangle-down', size=10)),row = 4, col=1)
+# fig1.add_trace(go.Scatter(x=squeeze_on.index, y=smip[squeeze_on], mode='markers', name='Squeeze On', marker=dict(color='green', symbol='triangle-up', size=10)),row = 4, col=1)
+# fig1.add_trace(go.Scatter(x=squeeze_off.index, y=smip[squeeze_off], mode='markers', name='Squeeze Off', marker=dict(color='red', symbol='triangle-down', size=10)),row = 4, col=1)
+
+fig1.add_trace(go.Scatter(x=df.index, y=choppiness, name='Choppiness Index', line=dict(color='blue', width=2)), row = 4, col = 1)
 
 fig1.add_trace(go.Scatter(x=df.index, y=df['adx'], name='ADX', line=dict(color='blue', width=2)), row = 5, col = 1)
 
