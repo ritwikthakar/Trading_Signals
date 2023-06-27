@@ -830,7 +830,7 @@ fig1.add_trace(go.Bar(x=df2.index,y=sh,name="ImpulseHisto",marker=dict(color="bl
 fig1.add_trace(go.Scatter(x=df2.index,y=sb,name="ImpulseMACDCDSignal",mode="lines",line=dict(color="maroon")),row = 3, col=1)
 
 # Add the SMIP histogram
-fig1.add_trace(go.Bar(x=data.index, y=histogram, marker=dict(color=histogram_color), name="Histogram"),row = 4, col=1)
+fig1.add_trace(go.Bar(x=data.index, y=histogram, marker=dict(color=histogram), name="Histogram"),row = 4, col=1)
 
 # Add the Squeeze on and off markers
 fig1.add_trace(go.Scatter(x=squeeze_on.index, y=smip[squeeze_on], mode='markers', name='Squeeze On', marker=dict(color='green', symbol='triangle-up', size=10)),row = 4, col=1)
