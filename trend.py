@@ -243,6 +243,19 @@ df3 = df3.join(st_3)
 st_4 = Supertrend(df4, 20, 7)
 df4 = df4.join(st_4)
 
+# Calculate the 9SMA and 20SMA
+df['5SMA'] = df['Close'].rolling(window=5).mean()
+df['9SMA'] = df['Close'].rolling(window=9).mean()
+df['20SMA'] = df['Close'].rolling(window=20).mean()
+df['50SMA'] = df['Close'].rolling(window=50).mean()
+df['200SMA'] = df['Close'].rolling(window=200).mean()
+rolling_std = df['Close'].rolling(window=20).std()
+df['upper_band'] = df['20SMA'] + (rolling_std * 2)
+df['lower_band'] = df['20SMA'] - (rolling_std * 2)
+
+
+
+
 def create_plot(df, indicators):
     fig = sp.make_subplots(rows=5, cols=1, shared_xaxes=True, row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], vertical_spacing=0.02, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "Lower Indicator 1", "Lower Indicator 2", "Lower Indicator 3", "Lower Indicator 4"))
 
@@ -280,7 +293,15 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df3.index, y=df3['Final Upperband'], name='Supertrend Fast Upper Band', line = dict(color='purple', width=2)))
             fig.add_trace(go.Scatter(x=df4.index, y=df4['Final Lowerband'], name='Supertrend Slow Lower Band',line = dict(color='green', width=2)))
             fig.add_trace(go.Scatter(x=df4.index, y=df4['Final Upperband'], name='Supertrend Slow Upper Band',line = dict(color='red', width=2)))
-    
+        elif indicator == 'SMA Ribbons':
+            fig.add_trace(go.Scatter(x=df.index, y=df['5SMA'], name='5 SMA', line=dict(color='purple', width=2)))
+            fig.add_trace(go.Scatter(x=df.index, y=df['9SMA'], name='9 SMA', line=dict(color='blue', width=2)))
+            fig.add_trace(go.Scatter(x=df.index, y=df['50SMA'], name='50 SMA', line=dict(color='green', width=2)))
+            fig.add_trace(go.Scatter(x=df.index, y=df['200SMA'], name='200 SMA', line=dict(color='red', width=2)))
+        elif indicator == 'Bollinger Bands':
+            fig.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='black', width=2)))
+            fig.add_trace(go.Scatter(x=df.index, y=df['upper_band'], name='Upper BB', line=dict(color='black', width=2)))
+            fig.add_trace(go.Scatter(x=df.index, y=df['lower_band'], name='Lower BB', line=dict(color='black', width=2)))
     # Make it pretty
     layout = go.Layout(
         plot_bgcolor='#efefef',
@@ -325,7 +346,7 @@ def create_plot(df, indicators):
     st.plotly_chart(fig)
 
 
-indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend']
+indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands']
 
 default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
 
