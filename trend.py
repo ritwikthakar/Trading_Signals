@@ -224,7 +224,7 @@ def Supertrend(df, atr_period, multiplier):
     }, index=df.index)
     
     
-atr_period = 10
+atr_period = 7
 atr_multiplier = 3
 
 
