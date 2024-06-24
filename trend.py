@@ -254,17 +254,35 @@ df['upper_band'] = df['20SMA'] + (rolling_std * 2)
 df['lower_band'] = df['20SMA'] - (rolling_std * 2)
 
 # Define the function to calculate Ichimoku Cloud components
-df['nine_period_high'] = df['High'].rolling(window=9).max()
-df['nine_period_low'] = df['Low'].rolling(window=9).min()
-df['tenkan_sen'] = (df['nine_period_high'] + df['nine_period_low']) / 2
-df['period26_high'] = df['High'].rolling(window=26).max()
-df['period26_low'] = df['Low'].rolling(window=26).min()
-df['kijun_sen'] = (df['period26_high'] + df['period26_low']) / 2
-df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
-df['period52_high'] = df['High'].rolling(window=52).max()
-df['period52_low'] = df['Low'].rolling(window=52).min()
-df['senkou_span_b'] = ((df['period52_high'] + df['period52_low'] / 2).shift(26)
-df['chikou_span'] = df['Close'].shift(-26)
+def ichimoku_cloud(df):
+    nine_period_high = df['High'].rolling(window=9).max()
+    nine_period_low = df['Low'].rolling(window=9).min()
+    df['tenkan_sen'] = (nine_period_high + nine_period_low) / 2
+
+    period26_high = df['High'].rolling(window=26).max()
+    period26_low = df['Low'].rolling(window=26).min()
+    df['kijun_sen'] = (period26_high + period26_low) / 2
+
+    df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
+
+    period52_high = df['High'].rolling(window=52).max()
+    period52_low = df['Low'].rolling(window=52).min()
+    df['senkou_span_b'] = ((period52_high + period52_low) / 2).shift(26)
+
+    df['chikou_span'] = df['Close'].shift(-26)
+
+    return df
+# df['nine_period_high'] = df['High'].rolling(window=9).max()
+# df['nine_period_low'] = df['Low'].rolling(window=9).min()
+# df['tenkan_sen'] = (df['nine_period_high'] + df['nine_period_low']) / 2
+# df['period26_high'] = df['High'].rolling(window=26).max()
+# df['period26_low'] = df['Low'].rolling(window=26).min()
+# df['kijun_sen'] = (df['period26_high'] + df['period26_low']) / 2
+# df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
+# df['period52_high'] = df['High'].rolling(window=52).max()
+# df['period52_low'] = df['Low'].rolling(window=52).min()
+# df['senkou_span_b'] = ((df['period52_high'] + df['period52_low'] / 2).shift(26)
+# df['chikou_span'] = df['Close'].shift(-26)
 
 def create_plot(df, indicators):
     fig = sp.make_subplots(rows=5, cols=1, shared_xaxes=True, row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], vertical_spacing=0.02, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "Lower Indicator 1", "Lower Indicator 2", "Lower Indicator 3", "Lower Indicator 4"))
