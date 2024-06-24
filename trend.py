@@ -253,37 +253,6 @@ rolling_std = df['Close'].rolling(window=20).std()
 df['upper_band'] = df['20SMA'] + (rolling_std * 2)
 df['lower_band'] = df['20SMA'] - (rolling_std * 2)
 
-# Define the function to calculate Ichimoku Cloud components
-def ichimoku_cloud(df):
-    nine_period_high = df['High'].rolling(window=9).max()
-    nine_period_low = df['Low'].rolling(window=9).min()
-    df['tenkan_sen'] = (nine_period_high + nine_period_low) / 2
-
-    period26_high = df['High'].rolling(window=26).max()
-    period26_low = df['Low'].rolling(window=26).min()
-    df['kijun_sen'] = (period26_high + period26_low) / 2
-
-    df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
-
-    period52_high = df['High'].rolling(window=52).max()
-    period52_low = df['Low'].rolling(window=52).min()
-    df['senkou_span_b'] = ((period52_high + period52_low) / 2).shift(26)
-
-    df['chikou_span'] = df['Close'].shift(-26)
-
-    return df
-# df['nine_period_high'] = df['High'].rolling(window=9).max()
-# df['nine_period_low'] = df['Low'].rolling(window=9).min()
-# df['tenkan_sen'] = (df['nine_period_high'] + df['nine_period_low']) / 2
-# df['period26_high'] = df['High'].rolling(window=26).max()
-# df['period26_low'] = df['Low'].rolling(window=26).min()
-# df['kijun_sen'] = (df['period26_high'] + df['period26_low']) / 2
-# df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
-# df['period52_high'] = df['High'].rolling(window=52).max()
-# df['period52_low'] = df['Low'].rolling(window=52).min()
-# df['senkou_span_b'] = ((df['period52_high'] + df['period52_low'] / 2).shift(26)
-# df['chikou_span'] = df['Close'].shift(-26)
-
 def create_plot(df, indicators):
     fig = sp.make_subplots(rows=5, cols=1, shared_xaxes=True, row_heights=[0.4, 0.15, 0.15, 0.15, 0.15], vertical_spacing=0.02, subplot_titles=(f"{ticker.upper()} Daily Candlestick Chart", "Lower Indicator 1", "Lower Indicator 2", "Lower Indicator 3", "Lower Indicator 4"))
 
@@ -330,18 +299,6 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='black', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['upper_band'], name='Upper BB', line=dict(color='black', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['lower_band'], name='Lower BB', line=dict(color='black', width=2)))
-        elif indicator == 'Ichimoku Cloud':
-            fig.add_trace(go.Scatter(x=df.index, y=df['tenkan_sen'], line=dict(color='blue', width=1), name='Tenkan-sen'))
-            fig.add_trace(go.Scatter(x=df.index, y=df['kijun_sen'], line=dict(color='red', width=1), name='Kijun-sen'))
-            fig.add_trace(go.Scatter(x=df.index, y=df['chikou_span'], line=dict(color='purple', width=1), name='Chikou Span'))
-            for i in range(len(df)):
-                if df['senkou_span_a'][i] > df['senkou_span_b'][i]:
-                    color = 'rgba(0, 255, 0, 0.3)'  # Green color
-                else:
-                    color = 'rgba(255, 0, 0, 0.3)'  # Red color
-            fig.add_trace(go.Scatter(x=[df.index[i], df.index[i]],y=[df['senkou_span_a'][i], df['senkou_span_b'][i]],fill='tonexty',mode='lines',line=dict(width=0),fillcolor=color,showlegend=False))
-            fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_a'], line=dict(color='red', width=1), name='Senkou Span A'))
-            fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_b'], line=dict(color='green', width=1), name='Senkou Span B'))
     # Make it pretty
     layout = go.Layout(
         plot_bgcolor='#efefef',
@@ -386,7 +343,7 @@ def create_plot(df, indicators):
     st.plotly_chart(fig)
 
 
-indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud']
+indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands']
 
 default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
 
