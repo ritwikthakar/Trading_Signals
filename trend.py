@@ -390,8 +390,6 @@ indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 
 
 default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
 
-
 selected_indicators = st.multiselect('Select Indicators', indicators, default = default_options)
-
 
 create_plot(df, selected_indicators)
