@@ -255,6 +255,11 @@ period52_high = df['High'].rolling(window=52).max()
 period52_low = df['Low'].rolling(window=52).min()
 df['senkou_span_b'] = ((period52_high + period52_low) / 2).shift(26)
 df['chikou_span'] = df['Close'].shift(-26)
+for i in range(len(df)):
+                if df['senkou_span_a'][i] > df['senkou_span_b'][i]:
+                    color = 'rgba(0, 255, 0, 0.3)'  # Green color
+                else:
+                    color = 'rgba(255, 0, 0, 0.3)'  # Red color
 
 # Calculate the 9SMA and 20SMA
 df['5SMA'] = df['Close'].rolling(window=5).mean()
@@ -318,11 +323,6 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['chikou_span'], line=dict(color='orange', width=1), name='Chikou Span'))
             fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_a'], line=dict(color='green', width=1), name='Senkou Span A'))
             fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_b'], line=dict(color='red', width=1), name='Senkou Span B'))
-            # for i in range(len(df)):
-            #     if df['senkou_span_a'][i] > df['senkou_span_b'][i]:
-            #         color = 'rgba(0, 255, 0, 0.3)'  # Green color
-            #     else:
-            #         color = 'rgba(255, 0, 0, 0.3)'  # Red color
             #     fig.add_trace(go.Scatter(
             #         x=[df.index[i], df.index[i]],
             #         y=[df['senkou_span_a'][i], df['senkou_span_b'][i]],
