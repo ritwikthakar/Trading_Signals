@@ -243,6 +243,21 @@ df3 = df3.join(st_3)
 st_4 = Supertrend(df4, 20, 7)
 df4 = df4.join(st_4)
 
+# Define the function to calculate Ichimoku Cloud components
+def ichimoku_cloud(df):
+    nine_period_high = df['High'].rolling(window=9).max()
+    nine_period_low = df['Low'].rolling(window=9).min()
+    df['tenkan_sen'] = (nine_period_high + nine_period_low) / 2
+    period26_high = df['High'].rolling(window=26).max()
+    period26_low = df['Low'].rolling(window=26).min()
+    df['kijun_sen'] = (period26_high + period26_low) / 2
+    df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
+    period52_high = df['High'].rolling(window=52).max()
+    period52_low = df['Low'].rolling(window=52).min()
+    df['senkou_span_b'] = ((period52_high + period52_low) / 2).shift(26)
+    df['chikou_span'] = df['Close'].shift(-26)
+    return df
+
 # Calculate the 9SMA and 20SMA
 df['5SMA'] = df['Close'].rolling(window=5).mean()
 df['9SMA'] = df['Close'].rolling(window=9).mean()
