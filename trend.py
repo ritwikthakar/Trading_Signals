@@ -314,6 +314,29 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='black', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['upper_band'], name='Upper BB', line=dict(color='black', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['lower_band'], name='Lower BB', line=dict(color='black', width=2)))
+        elif indicator == 'Ichimoku Cloud':
+            fig.add_trace(go.Scatter(x=df.index, y=df['tenkan_sen'], line=dict(color='blue', width=1), name='Tenkan-sen'))
+            fig.add_trace(go.Scatter(x=df.index, y=df['kijun_sen'], line=dict(color='red', width=1), name='Kijun-sen'))
+            fig.add_trace(go.Scatter(x=df.index, y=df['chikou_span'], line=dict(color='purple', width=1), name='Chikou Span'))
+            # Fill the cloud with different colors
+            for i in range(len(df)):
+                if df['senkou_span_a'][i] > df['senkou_span_b'][i]:
+                    color = 'rgba(0, 255, 0, 0.3)'  # Green color
+                else:
+                    color = 'rgba(255, 0, 0, 0.3)'  # Red color
+            
+                fig.add_trace(go.Scatter(
+                    x=[df.index[i], df.index[i]],
+                    y=[df['senkou_span_a'][i], df['senkou_span_b'][i]],
+                    fill='tonexty',
+                    mode='lines',
+                    line=dict(width=0),
+                    fillcolor=color,
+                    showlegend=False
+                ))
+            # Plot Senkou Span A and B
+            fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_a'], line=dict(color='green', width=1), name='Senkou Span A'))
+            fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_b'], line=dict(color='red', width=1), name='Senkou Span B'))
     # Make it pretty
     layout = go.Layout(
         plot_bgcolor='#efefef',
@@ -358,7 +381,7 @@ def create_plot(df, indicators):
     st.plotly_chart(fig)
 
 
-indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands']
+indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud']
 
 default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
 
