@@ -316,6 +316,8 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['tenkan_sen'], line=dict(color='blue', width=1), name='Tenkan-sen'))
             fig.add_trace(go.Scatter(x=df.index, y=df['kijun_sen'], line=dict(color='red', width=1), name='Kijun-sen'))
             fig.add_trace(go.Scatter(x=df.index, y=df['chikou_span'], line=dict(color='purple', width=1), name='Chikou Span'))
+            fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_a'], line=dict(color='green', width=1), name='Senkou Span A'))
+            fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_b'], line=dict(color='red', width=1), name='Senkou Span B'))
             # # Fill the cloud with different colors
             # for i in range(len(df)):
             #     if df['senkou_span_a'][i] > df['senkou_span_b'][i]:
