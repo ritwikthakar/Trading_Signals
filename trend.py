@@ -384,7 +384,9 @@ def create_plot(df, indicators):
     st.plotly_chart(fig)
 
 symbol = yf.Ticker(ticker)
-
+quarterly_income_statement = symbol.quarterly_income_stmt
+quarterly_balance_sheet = symbol.quarterly_balance_sheet
+quarterly_cashflow_statement = symbol.quarterly_cash_flow
 tab1, tab2 = st.tabs(['Technical Analysis' , "Fundamental Analysis"])
 
 with tab1:
@@ -395,6 +397,6 @@ with tab1:
 
 with tab2:
     st.header("Fundamental Analysis")
-    #statement = [quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement]
-    #selected_statements = st.selectbox("Select Financial Statement", quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement)
-    st.dataframe(symbol.quarterly_cashflow)
+    statement = [quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement]
+    selected_statements = st.selectbox("Select Financial Statement", quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement)
+    st.dataframe(selected_statements)
