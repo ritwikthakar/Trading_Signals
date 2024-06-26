@@ -23,7 +23,7 @@ ticker = st.sidebar.text_input('Enter Ticker', 'SPY')
 # i = st.sidebar.selectbox('Select Time Granularity', ('1d', '1m','2m','5m','15m','30m','60m','90m','1h','1d','5d','1wk','1mo','3mo'))
 t = st.sidebar.selectbox('Select Number of Days', (180, 3000, 1000, 735, 450, 400, 350, 252, 150, 90, 60, 45, 30, 15))
 i = st.sidebar.selectbox('Select Time Granularity', ('1d', '1wk', '1h', '15m'))
-st.header(f'{ticker.upper()} Technical Indicators')
+st.header(f'{ticker.upper()} Technical & Fundamental Analysis')
 
 start = dt.datetime.today()-dt.timedelta(t)
 end = dt.datetime.today()
