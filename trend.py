@@ -255,7 +255,14 @@ period52_high = df['High'].rolling(window=52).max()
 period52_low = df['Low'].rolling(window=52).min()
 df['senkou_span_b'] = ((period52_high + period52_low) / 2).shift(26)
 df['chikou_span'] = df['Close'].shift(-26)
-        
+
+def get_fill_color(label):
+    if label >= 1:
+        return 'rgba(0,250,0,0.4)'
+    else:
+        return 'rgba(250,0,0,0.4)'
+
+
 # Calculate the 9SMA and 20SMA
 df['5SMA'] = df['Close'].rolling(window=5).mean()
 df['9SMA'] = df['Close'].rolling(window=9).mean()
@@ -318,16 +325,16 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['chikou_span'], line=dict(color='orange', width=1), name='Chikou Span'))
             fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_a'], line=dict(color='green', width=1), name='Senkou Span A'))
             fig.add_trace(go.Scatter(x=df.index, y=df['senkou_span_b'], line=dict(color='red', width=1), name='Senkou Span B'))
-            df['label'] = np.where(df['senkou_span_a'] > df['senkou_span_b'], 1, 0)
+            df['label'] = np.where(df['tenkan_sen'] > df['kijun_sen'], 1, 0)
             df['group'] = df['label'].ne(df['label'].shift()).cumsum()
             df = df.groupby('group')
             dfs = []
             for name, data in df:
                 dfs.append(data)
             for df in dfs:
-                fig.add_traces(go.Scatter(x=df.index, y = df['senkou_span_a'],
+                fig.add_traces(go.Scatter(x=df.index, y = df['tenkan_sen'],
                                           line = dict(color='rgba(0,0,0,0)')))
-                fig.add_traces(go.Scatter(x=df.index, y = df['senkou_span_b'],
+                fig.add_traces(go.Scatter(x=df.index, y = df['kijun_sen'],
                                           line = dict(color='rgba(0,0,0,0)'), 
                                           fill='tonexty', 
                                           fillcolor = get_fill_color(df['label'].iloc[0])))
