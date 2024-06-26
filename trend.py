@@ -383,6 +383,8 @@ def create_plot(df, indicators):
     fig.update_layout(layout)
     st.plotly_chart(fig)
 
+symbol = yf.Ticker(ticker)
+
 tab1, tab2 = st.tabs(['Technical Analysis' , "Fundamental Analysis"])
 
 with tab1:
