@@ -398,5 +398,5 @@ with tab1:
 with tab2:
     st.header("Fundamental Analysis")
     statement = [quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement]
-    selected_statements = st.selectbox("Select Financial Statement", quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement)
+    selected_statements = st.multiselect("Select Financial Statement", quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement)
     st.dataframe(selected_statements)
