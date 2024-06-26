@@ -398,10 +398,10 @@ with tab1:
 
 with tab2:
     st.header("Fundamental Analysis")
-    statement = st.radio("Select Fimamcial Statement",["Quarterly Income Statement", "Quarterly_Balance_Sheet", "Quarterly_Cashflow_Statement"])
+    statement = st.radio("Select Fimamcial Statement",["Quarterly Income Statement", "Quarterly Balance Sheet", "Quarterly Cashflow Statement"])
     if statement == "Quarterly Income Statement":
         st.dataframe(symbol.quarterly_income_stmt)
-    elif statement == "Quarterly_Balance_Sheet":
-        st.dataframe(symbol.quarterly_balance_sheet)
-    else:
+    elif statement == "Quarterly Cashflow Statement":
         st.dataframe(symbol.quarterly_cashflow)
+    else:
+        st.dataframe(symbol.quarterly_balancesheet)
