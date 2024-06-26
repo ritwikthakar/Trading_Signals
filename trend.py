@@ -395,4 +395,4 @@ with tab1:
 
 with tab2:
     st.header("Fundamental Analysis")
-    st.dataframe(symbol.quarterly_cashflow)
+    st.dataframe(symbol.insider_transactions)
