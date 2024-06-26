@@ -387,6 +387,7 @@ symbol = yf.Ticker(ticker)
 quarterly_income_statement = symbol.quarterly_income_stmt
 quarterly_balance_sheet = symbol.quarterly_balance_sheet
 quarterly_cashflow_statement = symbol.quarterly_cash_flow
+
 tab1, tab2 = st.tabs(['Technical Analysis' , "Fundamental Analysis"])
 
 with tab1:
@@ -397,6 +398,13 @@ with tab1:
 
 with tab2:
     st.header("Fundamental Analysis")
-    statement = [quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement]
-    selected_statements = st.multiselect("Select Financial Statement", quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement)
-    st.dataframe(selected_statements)
+    statement = st.radio(
+    "Select Fimamcial Statement",
+    ["Quarterly Income Statement", "Quarterly_Balance_Sheet", "Quarterly_Cashflow_Statement"],
+    captions = ["Quarterly Income Statement", "Quarterly_Balance_Sheet", "Quarterly_Cashflow_Statement"])
+    if statement == "Quarterly Income Statement":
+        st.dataframe("symbol.quarterly_income_stmt")
+    elif statement == "Quarterly_Balance_Sheet":
+        st.dataframe("symbol.quarterly_balance_sheet")
+    else:
+        st.dataframe("symbol.quarterly_cash_flow")
