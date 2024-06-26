@@ -404,4 +404,4 @@ with tab2:
     elif statement == "Quarterly_Balance_Sheet":
         st.dataframe(symbol.quarterly_balance_sheet)
     else:
-        st.dataframe(symbol.symbol.quarterly_cashflow)
+        st.dataframe(symbol.quarterly_cashflow)
