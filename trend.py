@@ -289,7 +289,8 @@ def create_plot(df, indicators):
         elif indicator == 'MACD':
             fig.add_trace(go.Scatter(x=df.index, y=df['MACD'], name='MACD', line=dict(color='blue', width=2)), row = 3, col = 1)
             fig.add_trace(go.Scatter(x=df.index, y=df['Signal Line'], name='Signal', line=dict(color='red', width=2)), row = 3, col = 1)
-            fig.add_trace(go.Bar(x=df.index, y=df['Histogram'], name='Histogram', marker=dict(color=df['Histogram'], colorscale='rdylgn')), row = 3, col = 1)
+            colors = ['green' if val > 0 else 'red' for val in df['Histogram']]
+            fig.add_trace(go.Bar(x=df.index, y= df['Histogram'],  marker_color=colors, showlegend = False), row = 3, col=1)
         elif indicator == 'ATR':
             fig.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 4, col = 1)
         elif indicator == 'ADX':
