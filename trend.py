@@ -383,11 +383,16 @@ def create_plot(df, indicators):
     fig.update_layout(layout)
     st.plotly_chart(fig)
 
+tab1, tab2 = st.tabs(['Technical Analysis' , "Fundamental Analysis"])
 
-indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud']
+with tab1:
+    indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud']
+    default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
+    selected_indicators = st.multiselect('Select Indicators', indicators, default = default_options)
+    create_plot(df, selected_indicators)
 
-default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
-
-selected_indicators = st.multiselect('Select Indicators', indicators, default = default_options)
-
-create_plot(df, selected_indicators)
+with tab2:
+    st.header("Fundamental Analysis")
+    #statement = [quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement]
+    #selected_statements = st.selectbox("Select Financial Statement", quarterly_income_statement,quarterly_balance_sheet,quarterly_cashflow_statement)
+    st.dataframe(symbol.quarterly_cashflow)
