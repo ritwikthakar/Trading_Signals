@@ -406,7 +406,7 @@ with tab2:
         st.dataframe(symbol.insider_transactions)
     elif statement == "Institutional Holders":
         st.dataframe(symbol.institutional_holders)
-    elif statement ==""Owership Structure":
+    elif statement =="Owership Structure":
         st.dataframe(symbol.major_holders)
     else:
         st.write("Select Statement")
