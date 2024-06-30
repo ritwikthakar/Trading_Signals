@@ -243,6 +243,20 @@ df3 = df3.join(st_3)
 st_4 = Supertrend(df4, 20, 7)
 df4 = df4.join(st_4)
 
+# Fractals
+def find_fractals(data):
+    fractals = []
+    for i in range(5, len(df) - 5):
+        if df['High'][i] > df['High'][i-1] and df['High'][i] > df['High'][i+1] and \
+           df['High'][i] > df['High'][i-2] and df['High'][i] > df['High'][i+2]:
+            fractals.append((df.index[i], df['High'][i], 'peak'))
+        elif df['Low'][i] < df['Low'][i-1] and df['Low'][i] < df['Low'][i+1] and \
+             df['Low'][i] < df['Low'][i-2] and df['Low'][i] < df['Low'][i+2]:
+            fractals.append((df.index[i], df['Low'][i], 'trough'))
+    return fractals
+
+fractals = find_fractals(df)
+
 # Define the function to calculate Ichimoku Cloud components
 nine_period_high = df['High'].rolling(window=9).max()
 nine_period_low = df['Low'].rolling(window=9).min()
@@ -320,6 +334,9 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='black', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['upper_band'], name='Upper BB', line=dict(color='black', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['lower_band'], name='Lower BB', line=dict(color='black', width=2)))
+        elif indicator == 'Fractals':
+            for date, price, marker_type in fractals:
+                fig.add_trace(go.Scatter(x=[date], y=[price], mode='markers', marker=dict(color='red' if marker_type == 'peak' else 'green'), name=marker_type))
         elif indicator == 'Ichimoku Cloud':
             fig.add_trace(go.Scatter(x=df.index, y=df['tenkan_sen'], line=dict(color='blue', width=2), name='Tenkan-sen'))
             fig.add_trace(go.Scatter(x=df.index, y=df['kijun_sen'], line=dict(color='purple', width=2), name='Kijun-sen'))
@@ -388,7 +405,7 @@ symbol = yf.Ticker(ticker)
 tab1, tab2 = st.tabs(['Technical Analysis' , "Fundamental Analysis"])
 
 with tab1:
-    indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud']
+    indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
     default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
     selected_indicators = st.multiselect('Select Indicators', indicators, default = default_options)
     create_plot(df, selected_indicators)
