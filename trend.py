@@ -402,7 +402,39 @@ def create_plot(df, indicators):
 
 symbol = yf.Ticker(ticker)
 
-tab1, tab2 = st.tabs(['Technical Analysis' , "Fundamental Analysis"])
+# Discounted Cash Flow (DCF) Valuation Function
+def dcf_valuation(free_cash_flow, growth_rate, discount_rate, terminal_growth_rate, years=5):
+    """
+    Perform DCF valuation.
+    
+    Parameters:
+    free_cash_flow (float): The most recent Free Cash Flow (FCF).
+    growth_rate (float): The growth rate of FCF for the forecast period.
+    discount_rate (float): The discount rate (WACC).
+    terminal_growth_rate (float): The terminal growth rate for perpetuity after forecast.
+    years (int): Number of forecast years.
+    
+    Returns:
+    float: The intrinsic value of the stock.
+    """
+    # Calculate the projected free cash flows
+    projected_fcfs = [free_cash_flow * (1 + growth_rate) ** year for year in range(1, years + 1)]
+    
+    # Discount the projected free cash flows to present value
+    discounted_fcfs = [fcf / (1 + discount_rate) ** year for year, fcf in enumerate(projected_fcfs, start=1)]
+    
+    # Calculate the terminal value (TV)
+    terminal_value = (projected_fcfs[-1] * (1 + terminal_growth_rate)) / (discount_rate - terminal_growth_rate)
+    
+    # Discount the terminal value to present value
+    discounted_terminal_value = terminal_value / (1 + discount_rate) ** years
+    
+    # Sum the discounted FCFs and the discounted terminal value
+    intrinsic_value = sum(discounted_fcfs) + discounted_terminal_value
+    
+    return intrinsic_value
+
+tab1, tab2, tab3 = st.tabs(['Technical Analysis' , "Fundamental Analysis", "Discounted Cash Flow Valuation"])
 
 with tab1:
     indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
@@ -427,5 +459,31 @@ with tab2:
         st.dataframe(symbol.major_holders)
     else:
         st.write("Select Statement")
+
+with tab3:
+    if ticker:
+    stock = yf.Ticker(ticker)
+    financials = stock.financials
+    cash_flow = stock.cashflow
+    
+    # Extract the most recent Free Cash Flow (FCF)
+    if not cash_flow.empty:
+        recent_fcf = cash_flow.loc['Free Cash Flow'][-len(cash_flow.loc['Free Cash Flow'])]
+        st.write(f"Most Recent Free Cash Flow (FCF): ${recent_fcf:,.2f}")
+    else:
+        st.write("Unable to retrieve cash flow data.")
+    
+    # User inputs for DCF parameters
+    growth_rate = st.number_input("Growth Rate for FCF (%)", value=5.0) / 100
+    discount_rate = st.number_input("Discount Rate (WACC) (%)", value=8.0) / 100
+    terminal_growth_rate = st.number_input("Terminal Growth Rate (%)", value=2.0) / 100
+    forecast_years = st.number_input("Forecast Period (years)", value=5)
+    
+    # Calculate intrinsic value using DCF model
+    if st.button("Calculate Intrinsic Value"):
+        intrinsic_value = dcf_valuation(recent_fcf, growth_rate, discount_rate, terminal_growth_rate, forecast_years)
+        st.write(f"**Intrinsic Value using Discounted Cash Flow Valuation:** ${intrinsic_value:,.2f}")
+else:
+    st.write("Please enter a valid stock ticker symbol.")
     
 
