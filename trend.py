@@ -450,7 +450,7 @@ def dcf_valuation(free_cash_flow, growth_rate, discount_rate, terminal_growth_ra
     
     return intrinsic_value
 
-tab1, tab2, tab3, tab4 = st.tabs(['Technical Analysis' , "Fundamental Analysis", "Discounted Cash Flow Valuation","Dividend Discount Valuation"])
+tab1, tab2, tab3 = st.tabs(['Technical Analysis' , "Fundamental Analysis", "Discounted Cash Flow Valuation"])
 
 with tab1:
     indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
@@ -501,34 +501,5 @@ with tab3:
         st.write(f"**Intrinsic Value using Discounted Cash Flow Valuation:** ${intrinsic_value:,.2f}")
     else:
         st.write("Please enter a valid stock ticker symbol.")
-
-with tab4:
-    if ticker:
-        stock = yf.Ticker(ticker)
-    
-    # Get the dividend history
-    dividends = stock.dividends
-    
-    # Check if dividend data is available
-    if not dividends.empty:
-        # Calculate the most recent annual dividend
-        recent_dividend = dividends[-4:].sum()  # Assuming quarterly dividends
-        
-        # Display the most recent annual dividend
-        st.write(f"Most Recent Annual Dividend: ${recent_dividend:,.2f}")
-        
-        # User inputs for growth rate and discount rate
-        growth_rate = st.number_input("Dividend Growth Rate (%)", value=5.0) / 100
-        discount_rate = st.number_input("Discount Rate (%)", value=8.0) / 100
-        
-        # Calculate intrinsic value using the DDM model
-        if st.button("Calculate Intrinsic Value"):
-            try:
-                intrinsic_value = ddm_valuation(recent_dividend, growth_rate, discount_rate)
-                st.write(f"**Intrinsic Value per Share:** ${intrinsic_value:,.2f}")
-            except ZeroDivisionError:
-                st.write("Error: Discount rate must be greater than the growth rate.")
-        else:
-            st.write("This stock does not have a dividend history.")
     
 
