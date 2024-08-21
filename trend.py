@@ -496,7 +496,7 @@ with tab3:
     forecast_years = st.number_input("Forecast Period (years)", value=5)
     
     # Calculate intrinsic value using DCF model
-    if st.button("Calculate Intrinsic Value"):
+    if st.button("Calculate Intrinsic Value (DCF)"):
         intrinsic_value = dcf_valuation(recent_fcf, growth_rate, discount_rate, terminal_growth_rate, forecast_years)
         st.write(f"**Intrinsic Value using Discounted Cash Flow Valuation:** ${intrinsic_value:,.2f}")
     else:
@@ -522,7 +522,7 @@ with tab4:
         discount_rate = st.number_input("Discount Rate (%)", value=8.0) / 100
         
         # Calculate intrinsic value using the DDM model
-        if st.button("Calculate Intrinsic Value"):
+        if st.button("Calculate Intrinsic Value (DDM)"):
             try:
                 intrinsic_value = ddm_valuation(recent_dividend, div_growth_rate, discount_rate)
                 st.write(f"**Intrinsic Value per Share:** ${intrinsic_value:,.2f}")
