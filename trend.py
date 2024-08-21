@@ -462,9 +462,9 @@ with tab2:
 
 with tab3:
     if ticker:
-    stock = yf.Ticker(ticker)
-    financials = stock.financials
-    cash_flow = stock.cashflow
+        stock = yf.Ticker(ticker)
+        financials = stock.financials
+        cash_flow = stock.cashflow
     
     # Extract the most recent Free Cash Flow (FCF)
     if not cash_flow.empty:
