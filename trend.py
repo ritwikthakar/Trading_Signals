@@ -483,7 +483,7 @@ with tab3:
     if st.button("Calculate Intrinsic Value"):
         intrinsic_value = dcf_valuation(recent_fcf, growth_rate, discount_rate, terminal_growth_rate, forecast_years)
         st.write(f"**Intrinsic Value using Discounted Cash Flow Valuation:** ${intrinsic_value:,.2f}")
-else:
-    st.write("Please enter a valid stock ticker symbol.")
+    else:
+        st.write("Please enter a valid stock ticker symbol.")
     
 
