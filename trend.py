@@ -530,7 +530,7 @@ with tab4:
                 st.write("Error: Discount rate must be greater than the growth rate.")
     else:
         st.write("This stock does not have a dividend history.")
-    else:
-        st.write("Please enter a valid stock ticker symbol.")
+        else:
+            st.write("Please enter a valid stock ticker symbol.")
     
 
