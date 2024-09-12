@@ -359,10 +359,10 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['lower_band'], name='Lower BB', line=dict(color='black', width=2)))
         elif indicator == "Engulfing Candles":
             bullish_engulfing_dates = engulfing_candles[engulfing_candles['Bullish']].index
-            fig.add_trace(go.Scatter(x=bullish_engulfing_dates, y=df.loc[bullish_engulfing_dates, 'Low'], mode='markers', name='Bullish Engulfing', marker=dict(color='green', size=10)))
+            fig.add_trace(go.Scatter(x=bullish_engulfing_dates, y=df.loc[bullish_engulfing_dates, 'Low'], mode='markers', name='Bullish Engulfing', marker=dict(color='red', size=10)))
             # Add bearish engulfing candles
             bearish_engulfing_dates = engulfing_candles[engulfing_candles['Bearish']].index
-            fig.add_trace(go.Scatter(x=bearish_engulfing_dates, y=df.loc[bearish_engulfing_dates, 'High'], mode='markers', name='Bearish Engulfing', marker=dict(color='red', size=10)))
+            fig.add_trace(go.Scatter(x=bearish_engulfing_dates, y=df.loc[bearish_engulfing_dates, 'High'], mode='markers', name='Bearish Engulfing', marker=dict(color='green', size=10)))
         elif indicator == 'Fractals':
             for date, price, marker_type in fractals:
                 fig.add_trace(go.Scatter(x=[date], y=[price], mode='markers', marker=dict(color='red' if marker_type == 'peak' else 'green'), name=marker_type))
