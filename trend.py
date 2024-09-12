@@ -243,10 +243,33 @@ df3 = df3.join(st_3)
 st_4 = Supertrend(df4, 20, 7)
 df4 = df4.join(st_4)
 
+# Engulfing Candles
+def find_engulfing_candles(prices):
+    # Compute the candle body size for each candle
+    prices['BodySize'] = abs(prices['Open'] - prices['Close'])
+    
+    # Check for bullish engulfing patterns
+    bullish_engulfing = (prices['Open'] > prices['Close'].shift(1)) & \
+                        (prices['Close'] < prices['Open'].shift(1)) & \
+                        (prices['BodySize'] > prices['BodySize'].shift(1))
+    
+    # Check for bearish engulfing patterns
+    bearish_engulfing = (prices['Open'] < prices['Close'].shift(1)) & \
+                        (prices['Close'] > prices['Open'].shift(1)) & \
+                        (prices['BodySize'] > prices['BodySize'].shift(1))
+    
+    # Create a new DataFrame to store engulfing candles
+    engulfing_candles = pd.DataFrame(index=prices.index)
+    engulfing_candles['Bullish'] = bullish_engulfing
+    engulfing_candles['Bearish'] = bearish_engulfing
+    
+    return engulfing_candles
+engulfing_candles = find_engulfing_candles(df)
+
 # Fractals
 def find_fractals(data):
     fractals = []
-    for i in range(5, len(df) - 5):
+    for i in range(9, len(df) - 9):
         if df['High'][i] > df['High'][i-1] and df['High'][i] > df['High'][i+1] and \
            df['High'][i] > df['High'][i-2] and df['High'][i] > df['High'][i+2]:
             fractals.append((df.index[i], df['High'][i], 'peak'))
@@ -334,6 +357,12 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['20SMA'], name='20 SMA', line=dict(color='black', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['upper_band'], name='Upper BB', line=dict(color='black', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['lower_band'], name='Lower BB', line=dict(color='black', width=2)))
+        elif indicator == "Engulfing Candles":
+            bullish_engulfing_dates = engulfing_candles[engulfing_candles['Bullish']].index
+            fig.add_trace(go.Scatter(x=bullish_engulfing_dates, y=df.loc[bullish_engulfing_dates, 'Low'], mode='markers', name='Bullish Engulfing', marker=dict(color='green', size=10)))
+            # Add bearish engulfing candles
+            bearish_engulfing_dates = engulfing_candles[engulfing_candles['Bearish']].index
+            fig.add_trace(go.Scatter(x=bearish_engulfing_dates, y=df.loc[bearish_engulfing_dates, 'High'], mode='markers', name='Bearish Engulfing', marker=dict(color='red', size=10)))
         elif indicator == 'Fractals':
             for date, price, marker_type in fractals:
                 fig.add_trace(go.Scatter(x=[date], y=[price], mode='markers', marker=dict(color='red' if marker_type == 'peak' else 'green'), name=marker_type))
