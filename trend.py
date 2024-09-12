@@ -482,7 +482,7 @@ def dcf_valuation(free_cash_flow, growth_rate, discount_rate, terminal_growth_ra
 tab1, tab2, tab3, tab4 = st.tabs(['Technical Analysis' , "Fundamental Analysis", "Discounted Cash Flow Valuation", "Dividend Discount Valuation"])
 
 with tab1:
-    indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
+    indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'Engulfing Candles' , 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
     default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
     selected_indicators = st.multiselect('Select Indicators', indicators, default = default_options)
     create_plot(df, selected_indicators)
