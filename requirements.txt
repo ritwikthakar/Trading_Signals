@@ -4,3 +4,4 @@ plotly
 streamlit==1.16
 yfinance
 pandas_ta==0.3.14b0
+altair<5
