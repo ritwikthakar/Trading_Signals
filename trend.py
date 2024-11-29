@@ -52,20 +52,20 @@ df2 = df.copy()
 df3 = df.copy()
 df4 = df.copy()
 
-# Compute RSI divergence
-def compute_rsi_divergence(data, window):
-    high = df["High"].rolling(window).max()
-    low = df["Low"].rolling(window).min()
-    rsi = df["RSI"]
-    divergence = (rsi - rsi.shift(window)) / (high - low)
-    return divergence
+# # Compute RSI divergence
+# def compute_rsi_divergence(data, window):
+#     high = df["High"].rolling(window).max()
+#     low = df["Low"].rolling(window).min()
+#     rsi = df["RSI"]
+#     divergence = (rsi - rsi.shift(window)) / (high - low)
+#     return divergence
 
-rsi_divergence_window = 10
-df["RSI_Divergence"] = compute_rsi_divergence(df, rsi_divergence_window)
+# rsi_divergence_window = 10
+# df["RSI_Divergence"] = compute_rsi_divergence(df, rsi_divergence_window)
 
 # Compute buy and sell signals
-buy_signal = (df["RSI_Divergence"] > 0) & (df["RSI_Divergence"].shift(1) < 0)
-sell_signal = (df["RSI_Divergence"] < 0) & (df["RSI_Divergence"].shift(1) > 0)
+# buy_signal = (df["RSI_Divergence"] > 0) & (df["RSI_Divergence"].shift(1) < 0)
+# sell_signal = (df["RSI_Divergence"] < 0) & (df["RSI_Divergence"].shift(1) > 0)
 
 # Calculate the MACD
 df['12EMA'] = df['Close'].ewm(span=12).mean()
@@ -320,8 +320,8 @@ def create_plot(df, indicators):
             fig.add_trace(go.Candlestick(x=df.index, open=df["HA_Open"], high=df["HA_High"], low=df["HA_Low"], close=df["HA_Close"], name="Price"), row=1, col=1)
         elif indicator == 'RSI':
             fig.add_trace(go.Scatter(x=df.index, y=df["RSI"], name="RSI"), row=2, col=1)
-            fig.add_trace(go.Scatter(x=df.index[buy_signal], y=df["RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
-            fig.add_trace(go.Scatter(x=df.index[sell_signal], y=df["RSI"][sell_signal], mode="markers", marker=dict(symbol="triangle-down", size=10, color="red"), name="Sell"), row=2, col=1)
+            # fig.add_trace(go.Scatter(x=df.index[buy_signal], y=df["RSI"][buy_signal], mode="markers", marker=dict(symbol="triangle-up", size=10, color="green"), name="Buy"), row=2, col=1)
+            # fig.add_trace(go.Scatter(x=df.index[sell_signal], y=df["RSI"][sell_signal], mode="markers", marker=dict(symbol="triangle-down", size=10, color="red"), name="Sell"), row=2, col=1)
             fig.add_trace(go.Scatter(x=df.index, y=df['20RSI'], name='Mean RSI', line=dict(color='Orange', width=2)), row = 2, col = 1)
         elif indicator == 'MACD':
             fig.add_trace(go.Scatter(x=df.index, y=df['MACD'], name='MACD', line=dict(color='blue', width=2)), row = 3, col = 1)
@@ -483,7 +483,7 @@ tab1, tab2, tab3, tab4 = st.tabs(['Technical Analysis' , "Fundamental Analysis",
 
 with tab1:
     indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'Engulfing Candles' , 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
-    default_options = ['Candlestick Chart', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
+    default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
     selected_indicators = st.multiselect('Select Indicators', indicators, default = default_options)
     create_plot(df, selected_indicators)
 
