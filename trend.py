@@ -483,7 +483,7 @@ tab1, tab2, tab3, tab4 = st.tabs(['Technical Analysis' , "Fundamental Analysis",
 
 with tab1:
     indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'Engulfing Candles' , 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
-    default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
+    default_options = ['Candlestick Chart', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
     selected_indicators = st.multiselect('Select Indicators', indicators, default = default_options)
     create_plot(df, selected_indicators)
 
