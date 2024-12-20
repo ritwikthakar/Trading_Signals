@@ -1,7 +1,7 @@
 numpy
 pandas
 plotly
-streamlit==1.16
+streamlit==1.41.0
 yfinance
 pandas_ta==0.3.14b0
 altair<5
