@@ -91,78 +91,78 @@ df['minus_di'] = 100 * (df['minus_dm'] / df['atr']).ewm(span=n, adjust=False).me
 df['dx'] = 100 * (abs(df['plus_di'] - df['minus_di']) / (df['plus_di'] + df['minus_di'])).ewm(span=n, adjust=False).mean()
 df['adx'] = df['dx'].ewm(span=n, adjust=False).mean()
 
-# Calculate PSAR
-def psar(df, iaf = 0.02, maxaf = 0.2):
-    length = len(df)
-    dates = list(df.index)
-    high = list(df['High'])
-    low = list(df['Low'])
-    close = list(df['Close'])
-    psar = close[0:len(close)]
-    psarbull = [None] * length # Bullish signal - dot below candle
-    psarbear = [None] * length # Bearish signal - dot above candle
-    bull = True
-    af = iaf # acceleration factor
-    ep = low[0] # ep = Extreme Point
-    hp = high[0] # High Point
-    lp = low[0] # Low Point
+# # Calculate PSAR
+# def psar(df, iaf = 0.02, maxaf = 0.2):
+#     length = len(df)
+#     dates = list(df.index)
+#     high = list(df['High'])
+#     low = list(df['Low'])
+#     close = list(df['Close'])
+#     psar = close[0:len(close)]
+#     psarbull = [None] * length # Bullish signal - dot below candle
+#     psarbear = [None] * length # Bearish signal - dot above candle
+#     bull = True
+#     af = iaf # acceleration factor
+#     ep = low[0] # ep = Extreme Point
+#     hp = high[0] # High Point
+#     lp = low[0] # Low Point
 
-    # https://www.investopedia.com/terms/p/parabolicindicator.asp - Parabolic Stop & Reverse Formula from Investopedia 
-    for i in range(2,length):
-        if bull:
-            psar[i] = psar[i - 1] + af * (hp - psar[i - 1])
-        else:
-            psar[i] = psar[i - 1] + af * (lp - psar[i - 1])
-        reverse = False
-        if bull:
-            if low[i] < psar[i]:
-                bull = False
-                reverse = True
-                psar[i] = hp
-                lp = low[i]
-                af = iaf
-        else:
-            if high[i] > psar[i]:
-                bull = True
-                reverse = True
-                psar[i] = lp
-                hp = high[i]
-                af = iaf
-        if not reverse:
-            if bull:
-                if high[i] > hp:
-                    hp = high[i]
-                    af = min(af + iaf, maxaf)
-                if low[i - 1] < psar[i]:
-                    psar[i] = low[i - 1]
-                if low[i - 2] < psar[i]:
-                    psar[i] = low[i - 2]
-            else:
-                if low[i] < lp:
-                    lp = low[i]
-                    af = min(af + iaf, maxaf)
-                if high[i - 1] > psar[i]:
-                    psar[i] = high[i - 1]
-                if high[i - 2] > psar[i]:
-                    psar[i] = high[i - 2]
-        if bull:
-            psarbull[i] = psar[i]
-        else:
-            psarbear[i] = psar[i]
-    return {"dates":dates, "high":high, "low":low, "close":close, "psar":psar, "psarbear":psarbear, "psarbull":psarbull}
+#     # https://www.investopedia.com/terms/p/parabolicindicator.asp - Parabolic Stop & Reverse Formula from Investopedia 
+#     for i in range(2,length):
+#         if bull:
+#             psar[i] = psar[i - 1] + af * (hp - psar[i - 1])
+#         else:
+#             psar[i] = psar[i - 1] + af * (lp - psar[i - 1])
+#         reverse = False
+#         if bull:
+#             if low[i] < psar[i]:
+#                 bull = False
+#                 reverse = True
+#                 psar[i] = hp
+#                 lp = low[i]
+#                 af = iaf
+#         else:
+#             if high[i] > psar[i]:
+#                 bull = True
+#                 reverse = True
+#                 psar[i] = lp
+#                 hp = high[i]
+#                 af = iaf
+#         if not reverse:
+#             if bull:
+#                 if high[i] > hp:
+#                     hp = high[i]
+#                     af = min(af + iaf, maxaf)
+#                 if low[i - 1] < psar[i]:
+#                     psar[i] = low[i - 1]
+#                 if low[i - 2] < psar[i]:
+#                     psar[i] = low[i - 2]
+#             else:
+#                 if low[i] < lp:
+#                     lp = low[i]
+#                     af = min(af + iaf, maxaf)
+#                 if high[i - 1] > psar[i]:
+#                     psar[i] = high[i - 1]
+#                 if high[i - 2] > psar[i]:
+#                     psar[i] = high[i - 2]
+#         if bull:
+#             psarbull[i] = psar[i]
+#         else:
+#             psarbear[i] = psar[i]
+#     return {"dates":dates, "high":high, "low":low, "close":close, "psar":psar, "psarbear":psarbear, "psarbull":psarbull}
 
-if __name__ == "__main__":
-    import sys
-    import os
+# if __name__ == "__main__":
+#     import sys
+#     import os
     
-    startidx = 0
-    endidx = len(df)
+#     startidx = 0
+#     endidx = len(df)
     
-    result = psar(df)
-    dates = result['dates'][startidx:endidx]
-    close = result['close'][startidx:endidx]
-    df["psarbear"] = result['psarbear'][startidx:endidx]
-    df["psarbull"] = result['psarbull'][startidx:endidx]
+#     result = psar(df)
+#     dates = result['dates'][startidx:endidx]
+#     close = result['close'][startidx:endidx]
+#     df["psarbear"] = result['psarbear'][startidx:endidx]
+#     df["psarbull"] = result['psarbull'][startidx:endidx]
 
 # Supertrend
 
@@ -332,9 +332,9 @@ def create_plot(df, indicators):
             fig.add_trace(go.Scatter(x=df.index, y=df['atr'], name='ATR', line=dict(color='purple', width=2)), row = 4, col = 1)
         elif indicator == 'ADX':
             fig.add_trace(go.Scatter(x=df.index, y=df['adx'], name='ADX', line=dict(color='blue', width=2)), row = 5, col = 1)
-        elif indicator == 'PSAR':
-            fig.add_trace(go.Scatter(x=dates, y=df["psarbull"], name='buy',mode = 'markers', marker = dict(color='green', size=2)))
-            fig.add_trace(go.Scatter(x=dates, y=df["psarbear"], name='sell', mode = 'markers',marker = dict(color='red', size=2)))
+        # elif indicator == 'PSAR':
+        #     fig.add_trace(go.Scatter(x=dates, y=df["psarbull"], name='buy',mode = 'markers', marker = dict(color='green', size=2)))
+        #     fig.add_trace(go.Scatter(x=dates, y=df["psarbear"], name='sell', mode = 'markers',marker = dict(color='red', size=2)))
         elif indicator == 'Supertrend':
             fig.add_trace(go.Scatter(x=df.index, y=df['Final Lowerband'], name='Supertrend Lower Band', line = dict(color='green', width=2)))
             fig.add_trace(go.Scatter(x=df.index, y=df['Final Upperband'], name='Supertrend Upper Band', line = dict(color='red', width=2)))
@@ -482,8 +482,8 @@ def dcf_valuation(free_cash_flow, growth_rate, discount_rate, terminal_growth_ra
 tab1, tab2, tab3, tab4 = st.tabs(['Technical Analysis' , "Fundamental Analysis", "Discounted Cash Flow Valuation", "Dividend Discount Valuation"])
 
 with tab1:
-    indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'Engulfing Candles' , 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
-    default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'PSAR', 'Supertrend']
+    indicators = ['Candlestick Chart', 'Heikin Ashi Candles', 'Engulfing Candles' , 'RSI', 'MACD', 'ATR', 'ADX', 'Supertrend', 'Fast Double Supertrend', 'Slow Double Supertrend', 'SMA Ribbons', 'Bollinger Bands', 'Ichimoku Cloud', 'Fractals']
+    default_options = ['Candlestick Chart', 'RSI', 'MACD', 'ATR', 'ADX', 'Supertrend']
     selected_indicators = st.multiselect('Select Indicators', indicators, default = default_options)
     create_plot(df, selected_indicators)
 
